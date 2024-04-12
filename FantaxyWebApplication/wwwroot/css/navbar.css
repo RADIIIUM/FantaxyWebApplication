@@ -1,0 +1,176 @@
+﻿/* Боковое меню навигации */
+.sidenav {
+    height: 100%; /* 100% Полный рост */
+    width: 0; /* 0 ширина - измените это с помощью JavaScript */
+    position: fixed; /* Оставаться на месте */
+    z-index: 1; /* Оставайтесь на вершине */
+    top: 0; /* Оставайтесь на вершине */
+    left: 0;
+    overflow: hidden;
+    background: linear-gradient(90deg, rgba(57,0,68,1) 0%, rgba(12,0,14,1) 100%);
+    overflow-x: hidden; /* Отключить горизонтальную прокрутку */
+    transition: 0.5s; /* 0.5 секунд эффект перехода, чтобы скользить в sidenav */
+}
+
+
+    /* Положение и стиль кнопки закрытия (верхний правый угол) */
+.navdiv2 .closebtn {
+    font-size: 36px;
+    margin-left: auto;
+    margin-top: -10px;
+    margin-right: 10px;
+    color: white;
+
+}
+
+    .navdiv2 .closebtn:link, .closebtn:visited, .closebtn:active {
+        text-decoration: none;
+        user-select: none;
+        user-select: none;
+        color: white;
+    }
+    /* Стиль содержимого страницы - используйте это, если вы хотите переместить содержимое страницы вправо при открытии боковой навигации */
+    #main {
+    transition: margin-left .5s;
+    padding: 20px;
+}
+
+/* На небольших экранах, где высота меньше 450px, измените стиль sidenav (меньше отступов и меньший размер шрифта) */
+@media screen and (max-height: 450px) {
+    .sidenav {
+        padding-top: 15px;
+        overflow: hidden;
+    }
+
+        .sidenav a {
+            font-size: 18px;
+        }
+}
+
+
+.spanOpenClick {
+    display: flex;
+    width: 2%;
+    height: 100vh;
+    background: #9500b0;
+    position: fixed;
+
+}
+
+    .spanOpenClick span {
+        align-self: center;
+        color: white;
+        font-size: 45px;
+        border-radius: 50%;
+        background: #9500b0;
+    }
+
+
+nav {
+    background: #5a006a;
+    width: calc(var(--index) * 5);
+    margin-right: auto;
+    height: 100%;
+    position: fixed;
+    overflow: hidden;
+}
+
+.navdiv a:link, .navdiv a:visited, .navdiv a:active {
+    margin-top: 10px;
+    text-align: center;
+    display: flex;
+    color: white;
+    background: #e63b8f;
+    width: calc(var(--index) * 3);
+    height: calc(var(--index) * 3); /* Размеры кнопки */
+    border-radius: 50%; /* Радиус скругления */
+    border: none; /* Убираем рамку вокруг кнопки */
+    vertical-align: top;
+}
+
+.navdiv a:link, .navdiv a:visited, .navdiv a:active {
+    text-decoration: none;
+    user-select: none;
+    user-select: none;
+    transition: transform 1s;
+}
+
+.navdiv a:link span {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    align-self: center;
+    font-size: calc(var(--index) * 2);
+}
+
+.navdiv a:hover {
+    transform: scale(1.1);
+}
+
+/* Работает в Firefox */
+.navdiv {
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    height: 88vh;
+    padding-left: 10px;
+    padding-right: 10px;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+}
+
+
+    /* Работает в Chrome, Edge и Safari */
+    .navdiv::-webkit-scrollbar {
+        width: 12px;
+        opacity: 0;
+        transition: opacity 0.2s linear;
+    }
+
+    .navdiv::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .navdiv::-webkit-scrollbar-thumb {
+        opacity: 0;
+        transition: opacity 0.2s linear;
+    }
+
+        .navdiv::-webkit-scrollbar-thumb:hover {
+            opacity: 1;
+        }
+
+
+
+    .navdiv img {
+        width: calc(var(--index) * 3);
+        margin-top: 10px;
+        height: calc(var(--index) * 3);
+        border-radius: 50%;
+        transition: transform 1s;
+    }
+
+        .navdiv img:hover {
+            transform: scale(1.1);
+        }
+
+.navdiv2 {
+    height: 12vh;
+    background: #941bff;
+    display: flex;
+    padding: 10px;
+}
+
+    .navdiv2 img {
+        align-self: center;
+        width: calc(var(--index) * 3);
+        height: calc(var(--index) * 3);
+        border-radius: 50%;
+        transition: transform 1s;
+    }
+
+        .navdiv2 img:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px white;
+        }

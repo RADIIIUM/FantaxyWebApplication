@@ -1,0 +1,60 @@
+﻿@using FantaxyWebApplication.Services;
+@using Newtonsoft.Json;
+@model FantaxyWebApplication.Models.Entities.User
+@inject IHttpContextAccessor httpAccessor;
+
+@{
+    byte[]? avatar = httpAccessor.HttpContext.Session.GetObject<byte[]>("RegAvatar");
+}
+<div class="cont">
+
+    <form id="imgForm" method="post" asp-controller="Home" asp-action="UploadImage" enctype="multipart/form-data">
+        @if (avatar != null)
+        {
+            <img class="ava" src="data:image/jpeg;base64,@(Convert.ToBase64String(avatar))" />
+        }
+        else
+        {
+            <img class="ava" src="~/img/icon/stdAvatar.png" />
+        }
+        <input type="file" id="imgFile" name="Avatar" style="display: none;" accept="image/png, image/jpeg" />
+
+    </form>
+    <span style="color: white; font-family: Sansation Light; display: block"> Аватар </span>
+    <span style="color: white; font-family: Sansation Light;  display: block"> Кликни! </span>
+    <form method="post"
+          asp-action="RegAccount"
+          asp-controller="Home">
+        <h4> @ViewBag.Success </h4>
+        <h3> Логин </h3>
+        @Html.EditorFor(model => model.UserLogin)
+        @Html.ValidationMessageFor(model => model.UserLogin)
+
+        <h3> Пароль </h3>
+        @Html.EditorFor(model => model.UserPassword)
+        @Html.ValidationMessageFor(model => model.UserPassword)
+
+        <input type="submit"
+               class="btn -dark -big"
+               value="REGISTRATION" />
+        <a asp-action="Index"> Авторизация </a>
+
+    </form>
+</div>
+
+<script>
+    document.getElementById('imgFile').addEventListener('change', function () {
+        document.getElementById('imgForm').submit();
+    });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var avaImage = document.querySelector('.ava');
+        var avaFileInput = document.getElementById('imgFile');
+
+        avaImage.addEventListener('click', function () {
+            avaFileInput.click();
+        });
+    });
+</script>

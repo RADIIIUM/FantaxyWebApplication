@@ -1,0 +1,46 @@
+﻿.searchMain {
+    background: linear-gradient(90deg, rgba(57,0,68,1) 0%, rgba(12,0,14,1) 100%);
+    border-radius: 30px;
+    margin-right: auto;
+    margin-left: auto;
+    text-align: center;
+    display: block;
+    width: 70vw;
+}
+
+.searchInputDiv {
+    padding: 10px;
+    display: flex;
+}
+
+.searchlinkDiv {
+    display: block;
+    text-align: center;
+}
+
+.searchlinkDiv span {
+    color: white;
+    background: #9000cd;
+    padding: 5px;
+    user-select: none;
+    margin: 20px;
+    border-radius: 30px;
+}
+
+
+    .searchlinkDiv span:hover {
+        color: black;
+        user-select: none;
+        background: #d800af;
+        padding: 5px;
+        margin: 20px;
+        border-radius: 30px;
+    }
+    .searchlinkDiv a:link, a:active, a:visited {
+        color: white;
+        user-select: none;
+    }
+
+.searchInputDiv input {
+    margin: 5px;
+}

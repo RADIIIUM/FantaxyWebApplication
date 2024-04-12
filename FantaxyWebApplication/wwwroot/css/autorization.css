@@ -1,0 +1,124 @@
+﻿.cont {
+    display: inline-flex;
+    flex-direction: column;
+    width: 30%;
+}
+
+body {
+    text-align: center;
+    background: url(/img/background/MainBackground.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    text-align: center;
+}
+
+input {
+    display: block;
+    width: 100%;
+    color: white;
+    background: transparent;
+    border-color: transparent;
+    border-bottom-color: white;
+    margin-bottom: 15px;
+}
+
+h1, p {
+    color: white;
+    font-family: 'Sansation Light';
+}
+
+h3 {
+    color: white;
+    font-family: 'Sansation Light';
+    text-align: left;
+}
+
+h4 {
+    color: lawngreen;
+    font-family: 'Sansation Light';
+}
+
+img {
+    height: 30%;
+    width: 30%;
+    margin-top: 50px;
+    margin-bottom: 20px;
+}
+
+.cont2 {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.ava {
+    width: 200px;
+    height: 200px;
+    border-radius: 100%;
+    object-fit: cover;
+    transition: transform 1s;
+}
+
+    .ava:hover {
+        transform: scale(1.1);
+        box-shadow: 0 0 20px white
+    }
+
+#imgForm:hover::after {
+    content: attr('Кликни на меня и загрузи фото!');
+}
+
+a:link, a:visited, a:active {
+    text-align: center;
+    color: white;
+    text-decoration: none;
+    user-select: none;
+    transition: transform 1s;
+}
+
+a:hover {
+    color: #eda4ff;
+    transform: scale(1.1);
+}
+
+
+.cont2 a:link, a:visited, a:active {
+    color: white;
+    text-decoration: none;
+    user-select: none;
+    transition: transform 1s;
+}
+
+.cont2 a:hover {
+    color: #eda4ff;
+    transform: scale(1.1);
+}
+
+@media (max-width: 768px) {
+    .cont2 {
+        display: block;
+    }
+}
+
+.field-validation-error {
+    color: #f00;
+}
+
+.field-validation-valid {
+    display: none;
+}
+
+.input-validation-error {
+    border: 1px solid #f00;
+    border-color: #f00;
+}
+
+.validation-summary-errors {
+    font-weight: bold;
+    color: red;
+}
+
+.validation-summary-valid {
+    display: none;
+}

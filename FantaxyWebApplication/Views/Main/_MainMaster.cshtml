@@ -1,0 +1,101 @@
+﻿@using System.Text.Json;
+@using FantaxyWebApplication.Models.Entities;
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    var json = HttpContextAccessor.HttpContext.Request.Cookies["UserInfo"];
+    UserModel? userModel = new UserModel();
+    if(json == null)
+    {
+        userModel.Avatar = "\\img\\icon\\stdAvatar.png";
+    }
+    else
+    {
+        userModel = JsonSerializer.Deserialize<UserModel>(json);
+    }
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - FantaxyWebApplication</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20,100,1,200" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/navbar.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/FantaxyWebApplication.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <div id="mySidenav" class="sidenav" >
+        <div class="navdiv2">
+            <a asp-controller="Profile" asp-action="MainProfile" asp-route-edit="false">
+                <img class="ava" src="@userModel.Avatar" />
+            </a>
+        </div>
+        <div class="navdiv">
+
+            <div class="div-search">
+                <a class="linkSearch" asp-controller="Main" asp-action="Main">
+                    <span class="material-symbols-outlined">
+                        search
+                    </span>
+                </a>
+
+            </div>
+            <img src="/img/icon/Planet.png" />
+            <img src="/img/icon/Planet.png" />
+            <img src="/img/icon/Planet.png" />
+
+            <img src="/img/icon/Planet.png" />
+            <img src="/img/icon/Planet.png" />
+            <img src="/img/icon/Planet.png" />
+
+            <img src="/img/icon/Planet.png" />
+            <img src="/img/icon/Planet.png" />
+            <img src="/img/icon/Planet.png" />
+
+            <img src="/img/icon/Planet.png" />
+            <img src="/img/icon/Planet.png" />
+            <img src="/img/icon/Planet.png" />
+
+            <img src="/img/icon/Planet.png" />
+            <img src="/img/icon/Planet.png" />
+            <img src="/img/icon/Planet.png" />
+
+            <img src="/img/icon/Planet.png" />
+            <img src="/img/icon/Planet.png" />
+            <img src="/img/icon/Planet.png" />
+
+            <img src="/img/icon/Planet.png" />
+            <img src="/img/icon/Planet.png" />
+            <img src="/img/icon/Planet.png" />
+
+            <img src="/img/icon/Planet.png" />
+            <img src="/img/icon/Planet.png" />
+            <img src="/img/icon/Planet.png" />
+
+            <p></p>
+        </div>
+    </div>
+
+    <!-- Используйте любой элемент для открытия боковой навигации -->
+    <div class="spanOpenClick" style="font-variation-settings: 'FILL' 0, 'wght' 100, 'GRAD' 0, 'opsz' 48;" onclick="openNav()">
+        <span class="material-symbols-outlined">
+            more_vert
+        </span>
+    </div>
+    <!-- Добавить все содержимое страницы внутри этого div, если вы хотите, чтобы боковая навигация нажимала содержимое страницы вправо (не используется, если вы хотите, чтобы sidenav сидел поверх страницы -->
+    <div id="main">
+        <main role="main">
+            @RenderBody()
+        </main>
+    </div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/js/navbar.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+ </body>
+</html>

@@ -1,0 +1,245 @@
+.medium-image {
+    height: calc(var(--index) * 20);
+    width: calc(var(--index) * 20);
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+.roundedImg {
+    border-radius: 50%;
+}
+html {
+    font-size: 14px;
+}
+
+:root {
+    --index: calc(1vw + 1vh);
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+.h1-profileData {
+    margin-top: 50px;
+    text-align: center;
+    user-select: none;
+}
+
+    .h1-profileData::hover {
+        margin-top: 50px;
+        text-align: center;
+        user-select: none;
+    }
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    margin-bottom: 60px;
+    background: url("/img/background/MainBackground.jpg");
+    background-attachment: inherit;
+    background-repeat: no-repeat;
+    background-size: cover
+}
+
+@font-face {
+    font-family: "Sansation Light";
+    src: url("../fonts/sansation-light.woff2") format("woff2"); /* Modern Browsers */
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+/* Здесь будут общие элементы */
+
+/* =================== К Н О П К И ================== */
+
+.-btn {
+    border-radius: 30px;
+    border-color: transparent;
+    font-family: 'Sansation Light';
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.-dark {
+    background: #691a9c;
+    color: white;
+    transition: transform 1s;
+}
+
+    .-dark:hover {
+        transform: scale(1.1);
+        background: #e03ed5;
+        color: black;
+        transition: transform 1s;
+    }
+
+.-light {
+    background: #a75eff;
+    color: white;
+    transition: transform 1s;
+}
+
+    .-light:hover {
+        transform: scale(1.1);
+        background: #cc00ff;
+        color: black;
+        transition: transform 1s;
+    }
+
+.-big {
+    font-size: 1.5rem;
+}
+
+.-medium {
+    font-size: 1.2rem;
+}
+
+.-small {
+    font-size: 0.8rem;
+}
+/* =================== Т Е К С Т О В Ы Е    П О Л Я ================== */
+.-input {
+    border-radius: 10px;
+    width: 100%;
+}
+
+.-fillInput {
+    padding: 10px;
+    border-color: transparent;
+    background: #a75eff;
+    color: white;
+}
+
+    .-fillInput::placeholder {
+        color: #2e2e2e;
+    }
+
+.-transitInput {
+    background: transparent;
+    border-color: transparent;
+    border-bottom-color: white;
+    padding: 10px;
+}
+
+/* =================== C C Ы Л К И    К Н О П К И ================== */
+
+
+.div-link {
+    position: fixed;
+    left: calc(var(--index) * 6);
+}
+
+    .div-link a:link, .div-link a:visited, .div-link a:active, .div-link label {
+        margin-top: 10px;
+        text-align: center;
+        display: flex;
+        color: white;
+        background: #e63b8f;
+        width: calc(var(--index) * 3);
+        height: calc(var(--index) * 3); /* Размеры кнопки */
+        border-radius: 50%; /* Радиус скругления */
+        border: none; /* Убираем рамку вокруг кнопки */
+        vertical-align: top;
+        text-decoration: none;
+        user-select: none;
+        transition: transform 1s;
+    }
+
+        .div-link a:link span {
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+            align-self: center;
+            font-size: calc(var(--index) * 2);
+        }
+
+    .div-link label {
+        margin-left: auto;
+        padding-top: calc(var(--index) * 0.5);
+        margin-right: auto;
+        text-align: center;
+        align-self: center;
+        font-size: calc(var(--index) * 2);
+    }
+
+.div-link a:hover {
+    transform: scale(1.1);
+}
+
+/* =================== П О Д С К А З К И ================== */
+
+[data-tooltip] {
+    position: relative; /* Относительное позиционирование */
+}
+
+    [data-tooltip]::after {
+        content: attr(data-tooltip); /* Выводим текст */
+        font-size: 0.5em;
+        position: absolute; /* Абсолютное позиционирование */
+        width: max-content; /* Ширина подсказки */
+        left: 0;
+        border-radius: 10px;
+        font-family: 'Sansation Light';
+        top: 0; /* Положение подсказки */
+        background: #a75eff; /* Синий цвет фона */
+        color: #fff; /* Цвет текста */
+        padding: 0.5em; /* Поля вокруг текста */
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3); /* Параметры тени */
+        pointer-events: none; /* Подсказка */
+        opacity: 0; /* Подсказка невидима */
+        transition: 1s; /* Время появления подсказки */
+    }
+
+    [data-tooltip]:hover::after {
+        opacity: 1; /* Показываем подсказку */
+        left: 3em; /* Положение подсказки */
+        top: 1em;
+    }
+
+/* =================== З А Г Р У З К А ================== */
+
+#loading-animation {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+}
+
+    #loading-animation img {
+        width: 50px;
+        height: auto;
+    }
+
+
+
+/* =================== В А Л И Д А Ц И Я ================== */
+
+.field-validation-error {
+    color: #f00;
+}
+
+.field-validation-valid {
+    display: none;
+}
+
+.input-validation-error {
+    border: 1px solid #f00;
+    border-color: #f00;
+}
+
+.validation-summary-errors {
+    font-weight: bold;
+    color: red;
+}
+
+.validation-summary-valid {
+    display: none;
+}
