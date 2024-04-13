@@ -41,7 +41,7 @@ namespace FantaxyWebApplication.Controllers
             {
                 if (HttpContext.Request.Cookies.ContainsKey("UserInfo"))
                 {
-                    return Redirect("/Main/Main");
+                    return Redirect("/Main/Users");
                 }
                 else
                 {
@@ -59,7 +59,7 @@ namespace FantaxyWebApplication.Controllers
                     // аутентификация
                     var json = JsonSerializer.Serialize<UserModel>(us);
                     HttpContext.Response.Cookies.Append("UserInfo", json);
-                    return Redirect("/Main/Main");
+                    return Redirect("/Main/Users");
                 }
             }
             return View();
@@ -114,34 +114,20 @@ namespace FantaxyWebApplication.Controllers
                 GlobalUsersInfo userInfo = new GlobalUsersInfo();
                 userInfo.UserLoginNavigation = u;
                 userInfo.UserName = user.UserLogin;
-
-                IFormFile? result = await UploadFile(user.UserLogin);
-                if (result != null)
+                byte[] avatar = HttpContext.Session.Get("RegAvatar");
+                if(avatar != null)
                 {
-
-                    string uploadsPath = "\\img\\FantasyFiles\\Profiles\\Style\\Globals\\Avatar";
-                    if (!Directory.Exists(uploadsPath))
-                    {
-                        Directory.CreateDirectory(uploadsPath);
-                    }
-                    string filePath = Path.Combine(uploadsPath, result.FileName);
-                    using (var filestream = new FileStream(_appEnvironment.WebRootPath + filePath, FileMode.Create))
-                    {
-                        await result.CopyToAsync(filestream);
-                    }
-                    userInfo.Avatar = filePath;
-
+                    userInfo.Avatar = FileServices.CreateFileFromByteArray(_appEnvironment, avatar, Path.Combine("\\img\\FantasyFiles\\Profiles\\Style\\Globals\\Avatar", $"{user.UserLogin}.jpg"));
                 }
                 else
                 {
                     userInfo.Avatar = "\\img\\icon\\stdAvatar.png";
-
                 }
                 userInfo.MainBackground = "\\img\\background\\MainBackground.jpg";
                 userInfo.ProfileBackground = "\\img\\background\\secondBack.jpg";
 
                 GlobalRoleUser glr = new GlobalRoleUser();
-                glr.IdRole = 4; // 4 - Id номер Пользователя , 3 - Модератор, 2 - Админ, 1 - Главный админ, 5 - Заблокированный
+                glr.IdRole = 3; // 4 - Id номер Пользователя , 3 - Модератор, 2 - Админ, 1 - Главный админ, 5 - Заблокированный
                 glr.UserLoginNavigation = u;
                 await Task.Run(async () =>
                 {
@@ -159,39 +145,13 @@ namespace FantaxyWebApplication.Controllers
             return View(user);
         }
 
-        public async Task<IActionResult> UploadImage([FromForm]IFormFile Avatar)
+        [HttpPost]
+        public async Task<IActionResult> UploadImage([FromForm] IFormFile Avatar)
         {
-            HttpContext.Session.Set<byte[]>("RegAvatar", ImageUpload.UploadImage(Avatar));
+            byte[] avatar = ImageUpload.UploadImage(Avatar);
+            HttpContext.Session.Remove("RegAvatar");
+            HttpContext.Session.Set<byte[]>("RegAvatar", avatar);
             return View("Registration");
-        }
-
-        public async Task<IFormFile>? UploadFile(string login)
-        {
-            byte[]? byteArray = HttpContext.Session.Get<byte[]>("RegAvatar");
-            var ms = new MemoryStream();
-            try 
-            {
-                if (byteArray != null)
-                {
-                    await ms.WriteAsync(byteArray, 0, byteArray.Length);
-                    IFormFile result = new FormFile(ms, 0, byteArray.Length, $"{login}", $"{login}.jpg");
-                    return result;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            catch (Exception ex)
-            {
-                return null;
-            }
-            finally 
-            { 
-                ms.Close(); 
-            }
-
-
         }
 
         [HttpGet]
@@ -245,7 +205,7 @@ namespace FantaxyWebApplication.Controllers
   
                     HttpContext.Response.Cookies.Append("UserInfo", json);
                     await Authenticate(user.UserLogin);
-                    return Redirect("/Main/Main");
+                    return Redirect("/Main/Users");
 
                 }
                 else

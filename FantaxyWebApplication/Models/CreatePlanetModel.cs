@@ -1,14 +1,13 @@
-﻿namespace FantaxyWebApplication.Models.Entities
+﻿namespace FantaxyWebApplication.Models
 {
-    public class EditProfileModel
+    public class CreatePlanetModel
     {
+        public CreatePlanetModel() { }
         public string Login { get; set; }
         public string Name { get; set; }
-        public string Role { get; set; }
-
         public string Description { get; set; }
-        public string Email { get; set; }
-        public string Telephone { get; set; }
+
+        public bool Status { get; set; }
 
         public byte[] Avatar { get; set; }
 

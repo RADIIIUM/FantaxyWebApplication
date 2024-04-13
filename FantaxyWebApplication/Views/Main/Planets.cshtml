@@ -1,0 +1,34 @@
+﻿@{
+    Layout = "_MainMaster.cshtml";
+}
+<meta charset="utf-8">
+<link rel="stylesheet" href="~/css/main.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/items.css" asp-append-version="true" />
+
+<div class="div-link">
+    <a asp-controller="Planet" asp-action="CreatePlanet">
+        <span class="material-symbols-outlined" data-tooltip="Создать свою планету">
+            public
+        </span>
+    </a>
+</div>
+
+<form method="get">
+    <div class="searchMain">
+        <div class="searchInputDiv">
+            <input name="search" id="search" type="text" class="-input -fillInput -small" placeholder="Тут кто-нибудь есть?" />
+            <input type="submit" value="search" class="-btn -small -dark" />
+        </div>
+        <div class="searchlinkDiv">
+            <a asp-action ="Users" asp-controller="Main"> <span> Users </span></a>
+            <a > <span> Planets </span></a>
+        </div>
+    </div>
+</form>
+
+
+<div class="div-listItems">
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="~/js/searchPlanet.js"></script>

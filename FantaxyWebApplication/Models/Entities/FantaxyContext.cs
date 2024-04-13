@@ -29,6 +29,7 @@ namespace FantaxyWebApplication.Models.Entities
         public virtual DbSet<GlobalUsersInfo> GlobalUsersInfos { get; set; } = null!;
         public virtual DbSet<LikesPlanet> LikesPlanets { get; set; } = null!;
         public virtual DbSet<Planet> Planets { get; set; } = null!;
+        public virtual DbSet<PlanetInfo> PlanetInfos { get; set; } = null!;
         public virtual DbSet<PlanetRole> PlanetRoles { get; set; } = null!;
         public virtual DbSet<PlanetRoleUser> PlanetRoleUsers { get; set; } = null!;
         public virtual DbSet<PlanetUser> PlanetUsers { get; set; } = null!;
@@ -294,6 +295,31 @@ namespace FantaxyWebApplication.Models.Entities
                     .HasForeignKey(d => d.OwnerLogin)
                     .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK__Planets__OwnerLo__3F466844");
+            });
+
+            modelBuilder.Entity<PlanetInfo>(entity =>
+            {
+                entity.HasKey(e => e.IdPlanet)
+                    .HasName("PK__PlanetIn__12FD4B35341428FF");
+
+                entity.ToTable("PlanetInfo");
+
+                entity.Property(e => e.IdPlanet).ValueGeneratedNever();
+
+                entity.Property(e => e.Avatar).HasMaxLength(200);
+
+                entity.Property(e => e.MainBackground).HasMaxLength(200);
+
+                entity.Property(e => e.PlanetDescription).HasMaxLength(4000);
+
+                entity.Property(e => e.PlanetName).HasMaxLength(50);
+
+                entity.Property(e => e.ProfileBackground).HasMaxLength(200);
+
+                entity.HasOne(d => d.IdPlanetNavigation)
+                    .WithOne(p => p.PlanetInfo)
+                    .HasForeignKey<PlanetInfo>(d => d.IdPlanet)
+                    .HasConstraintName("FK__PlanetInf__IdPla__14270015");
             });
 
             modelBuilder.Entity<PlanetRole>(entity =>

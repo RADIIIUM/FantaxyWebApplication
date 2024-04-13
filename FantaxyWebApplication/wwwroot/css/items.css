@@ -1,0 +1,79 @@
+﻿
+
+.div-listItems {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 30px;
+    width: 70vw;
+    display: block;
+    height: 100%;
+    text-align: center;
+    background: #c46cd5;
+    box-shadow: 0 -200px 100px -120px #4000af inset;
+    border-radius: 30px;
+    animation: background 3s infinite alternate;
+}
+
+@keyframes background {
+    50% {
+        background: #756cd5;
+        box-shadow: 0 -200px 100px -100px #4000af inset;
+    }
+}
+
+.div-listItems .Item {
+    display: inline-block;
+    margin: 10px;
+    padding: 10px;
+    border-radius: 20px;
+    transition: transform 1s;
+}
+
+.div-listItems form {
+    display: inline-block;
+}
+
+.div-listItems .Item:hover {
+    transform: scale(1.1);
+    box-shadow: 0px 0px 15px white;
+}
+
+
+.Item img {
+    width: calc(var(--index) / 0.2);
+    height: calc(var(--index) / 0.2);
+    align-self: baseline;
+    border-radius: 50%;
+}
+
+.div-listItems .roleStatus {
+    font-size: calc(var(--index) * 1);
+    color: white;
+    display: block;
+    font-family: 'Sansation Light';
+    background: black;
+    border-radius: 30px;
+    margin-bottom: 5px;
+}
+
+.div-listItems .material-symbols-outlined {
+    color: white;
+    font-size: 30px;
+    border-radius: 50px;
+    user-select: none;
+    padding: 10px;
+}
+.div-listItems .h4 {
+    font-size: calc(var(--index) * 1);
+    display: block;
+    color: white;
+    background: transparent;
+    border-color: transparent;
+    text-align: center;
+
+    font-family: 'Sansation Light';
+}
+
+.div-listItems .h4:focus {
+    outline: none;
+}

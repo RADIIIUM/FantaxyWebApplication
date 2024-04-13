@@ -19,16 +19,6 @@ namespace FantaxyWebApplication.Controllers
             _appEnvironment = appEnvironment;
         }
 
-
-        public string CreateFileFromByteArray(byte[] data, string filePath)
-        {
-            using (var stream = new FileStream(_appEnvironment.WebRootPath + filePath, FileMode.Create))
-            {
-                stream.Write(data, 0, data.Length);
-            }
-            return filePath;
-        }
-
         public async Task<IActionResult> Save(string Nickname, string Desc)
         {
             var json = HttpContext.Request.Cookies["UserInfo"];
@@ -39,9 +29,9 @@ namespace FantaxyWebApplication.Controllers
             EditModel edit = HttpContext.Session.Get<EditModel>("EditProfile");
             if (edit != null)
             {
-                if(edit.Avatar != null) userModel.Avatar = CreateFileFromByteArray(edit.Avatar, Path.Combine("\\img\\FantasyFiles\\Profiles\\Style\\Globals\\Avatar", $"{userModel.Login}.jpg"));
-                if(edit.Main != null) userModel.Main = CreateFileFromByteArray(edit.Main, Path.Combine("\\img\\FantasyFiles\\Profiles\\Style\\Globals\\Main", $"{userModel.Login}.jpg"));
-                if(edit.Profile != null)  userModel.Profile = CreateFileFromByteArray(edit.Profile, Path.Combine("\\img\\FantasyFiles\\Profiles\\Style\\Globals\\Profile", $"{userModel.Login}.jpg"));
+                if(edit.Avatar != null) userModel.Avatar = FileServices.CreateFileFromByteArray(_appEnvironment,edit.Avatar, Path.Combine("\\img\\FantasyFiles\\Profiles\\Style\\Globals\\Avatar", $"{userModel.Login}.jpg"));
+                if(edit.Main != null) userModel.Main = FileServices.CreateFileFromByteArray(_appEnvironment, edit.Main, Path.Combine("\\img\\FantasyFiles\\Profiles\\Style\\Globals\\Main", $"{userModel.Login}.jpg"));
+                if(edit.Profile != null)  userModel.Profile = FileServices.CreateFileFromByteArray(_appEnvironment, edit.Profile, Path.Combine("\\img\\FantasyFiles\\Profiles\\Style\\Globals\\Profile", $"{userModel.Login}.jpg"));
             }
 
             using (FantaxyContext db = new FantaxyContext())
@@ -148,7 +138,7 @@ namespace FantaxyWebApplication.Controllers
                 }
 
             
-            return Redirect("/Main/Main");
+            return Redirect("/Main/Users");
         }
     }
 }

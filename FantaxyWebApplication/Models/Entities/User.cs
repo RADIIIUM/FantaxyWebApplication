@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
 namespace FantaxyWebApplication.Models.Entities
 {
@@ -23,11 +22,7 @@ namespace FantaxyWebApplication.Models.Entities
             UserStatusesStatuses = new HashSet<UserStatusesStatus>();
         }
 
-        [Required(ErrorMessage = "Пустой логин")]
-        [StringLength(50, ErrorMessage = "Длинный логин")]
         public string UserLogin { get; set; } = null!;
-        [Required(ErrorMessage = "Пустой пароль")]
-        [StringLength(50, MinimumLength = 6, ErrorMessage = "Короткий логин")]
         public string UserPassword { get; set; } = null!;
 
         public virtual GlobalUsersInfo? GlobalUsersInfo { get; set; }

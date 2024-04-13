@@ -1,0 +1,35 @@
+﻿@model IList<SearchModel>
+
+@foreach (var user in Model)
+{
+    string back = user.Profile.Replace("\\", "/");
+    <div class="Item" id="@Html.Raw(user.Id)" style="background: @($"url(\"{back}\")");
+    background-size: cover;
+    background-position: center;">
+        <img src="@user.Avatar" />
+        <input type="text" class="h4" readonly maxlenght="15" value="@Html.Raw(user.Name)" />
+        @{
+            switch (user.RoleOrStatus)
+            {
+                case 1:
+                    <span class="roleStatus"> Гл. Администратор </span>
+                    break;
+                case 2:
+                    <span class="roleStatus"> Администратор </span>
+                    break;
+                case 3:
+                    <span class="roleStatus"> Модератор </span>
+                    break;
+                case 4: // Публичный
+                    <span class="roleStatus"> Пользователь </span>
+                    break;
+                default:
+                    <span class="roleStatus"> Пользователь </span>
+                    break;
+
+            }
+        }
+        <input type="hidden" name="PlanetId" value="@Html.Raw(@user.Id)" />
+        <input type="hidden" name="PlanetStatus" value="@Html.Raw(@user.RoleOrStatus)" />
+    </div>
+}

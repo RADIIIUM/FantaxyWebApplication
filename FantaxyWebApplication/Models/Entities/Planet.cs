@@ -22,6 +22,7 @@ namespace FantaxyWebApplication.Models.Entities
 
         public virtual User? CuratorLoginNavigation { get; set; }
         public virtual User? OwnerLoginNavigation { get; set; }
+        public virtual PlanetInfo? PlanetInfo { get; set; }
         public virtual ICollection<Chat> Chats { get; set; }
         public virtual ICollection<LikesPlanet> LikesPlanets { get; set; }
         public virtual ICollection<PlanetUser> PlanetUsers { get; set; }

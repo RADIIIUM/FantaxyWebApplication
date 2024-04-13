@@ -1,0 +1,27 @@
+﻿@{
+    Layout = "_MainMaster.cshtml";
+}
+<meta charset="utf-8">
+<link rel="stylesheet" href="~/css/main.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/items.css" asp-append-version="true" />
+
+<form method="get">
+    <div class="searchMain">
+        <div class="searchInputDiv">
+            <input name="search" id="search" type="text" class="-input -fillInput -small" placeholder="Тут кто-нибудь есть?" />
+            <input type="submit" id="searchInput" value="search" class="-btn -small -dark" />
+        </div>
+        <div class="searchlinkDiv">
+            <a> <span> Users </span></a>
+            <a asp-action="Planets" asp-controller="Main"> <span> Planets </span></a>
+        </div>
+    </div>
+</form>
+
+
+<div class="div-listItems">
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="~/js/searchUser.js" charset="utf-8"></script>
