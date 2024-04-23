@@ -133,7 +133,7 @@ body {
 
 .div-link {
     position: fixed;
-    left: calc(var(--index) * 6);
+    left: calc(var(--index) * 3);
 }
 
     .div-link a:link, .div-link a:visited, .div-link a:active, .div-link label {

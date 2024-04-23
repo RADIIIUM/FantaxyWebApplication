@@ -1,25 +1,31 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FantaxyWebApplication.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FantaxyWebApplication.Services
 {
     public static class ImageUpload
     {
+
         public static byte[] UploadImage(IFormFile Avatar)
         {
             return ConvertIFormFileToByteArray(Avatar);
         }
 
-        public static string NameCut(string name, int maxLenght)
+        public static byte[] UploadPostImage (this IHttpContextAccessor httpContextAccessor, IFormFile file)
         {
-            if (name.Length >= maxLenght)
-            {
-                name = $"{name.Substring(0, 10)}...";
-                return name;
-            }
-            else
-            {
-                return name;
-            }
+            byte[] avatar = ImageUpload.UploadImage(file);
+            return avatar;
+        }
+
+        public static byte[] UploadProfileImage(this IHttpContextAccessor httpContextAccessor, IFormFile file, string session, EditModel model, string tag)
+        {
+            byte[] avatar = ImageUpload.UploadImage(file);
+            if(tag == "_A") model.Avatar = avatar;
+            if (tag == "_M") model.Main = avatar;
+            if (tag == "_P") model.Profile = avatar;
+            httpContextAccessor.HttpContext.Session.Remove(session);
+            httpContextAccessor.HttpContext.Session.Set<EditModel>(session, model);
+            return avatar;
         }
         public static byte[] ConvertIFormFileToByteArray(IFormFile file)
         {

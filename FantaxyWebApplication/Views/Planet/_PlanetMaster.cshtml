@@ -3,14 +3,16 @@
 @inject IHttpContextAccessor HttpContextAccessor
 @{
     var json = HttpContextAccessor.HttpContext.Request.Cookies["UserInfo"];
+  
     UserModel? userModel = new UserModel();
-    if(json == null)
+    if (json != null)
     {
-        userModel.Avatar = "\\img\\icon\\stdAvatar.png";
+        userModel = JsonSerializer.Deserialize<UserModel>(json);
+
     }
     else
     {
-        userModel = JsonSerializer.Deserialize<UserModel>(json);
+        userModel.Avatar = "\\img\\icon\\stdAvatar.png";
     }
 }
 
@@ -26,9 +28,11 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/navbar.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/FantaxyWebApplication.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/planets/mainPage.css" asp-append-version="true" />
 </head>
+
 <body>
-    <div id="mySidenav" class="sidenav" >
+    <div id="mySidenav" class="sidenav">
         <div class="navdiv2">
             <a asp-controller="Profile" asp-action="MainProfile" asp-route-edit="false">
                 <img class="ava" src="@userModel.Avatar" />
@@ -89,7 +93,35 @@
     <!-- Добавить все содержимое страницы внутри этого div, если вы хотите, чтобы боковая навигация нажимала содержимое страницы вправо (не используется, если вы хотите, чтобы sidenav сидел поверх страницы -->
     <div id="main">
         <main role="main">
-            @RenderBody()
+            <div class="div-link">
+
+                <a class="link-profile" asp-controller="Profile" data-tooltip="Профиль" asp-action="PlanetProfile">
+                    <span class="material-symbols-outlined">
+                        search
+                    </span>
+                </a>
+
+            </div>
+            <nav id="navPlanet">
+                <div id="navContent">
+                    <img id="planetAvatar" src="@Model.Avatar" />
+                    <h2 id="h2PlanetName"> @Model.PlanetName </h2>
+                    <label id="clikme"> [Нажми на меня] </label>
+                </div>
+
+                <div id="navLink">
+                    <a asp-action="MainPage" asp-controller="Planet" asp-route-page="Main"> Главная страница </a>
+                    <a asp-action="MainPage" asp-controller="Planet" asp-route-page="Posts"> Посты </a>
+                    <a> Чаты </a>
+                    <a> Пользователи </a>
+                </div>
+            </nav>
+
+            <div class="mainDiv">
+                <div class="contentDiv">
+                    @RenderBody()
+                </div>
+            </div>
         </main>
     </div>
 
@@ -97,6 +129,8 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/navbar.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" ></script>
+    <script src="~/js/planet/paralaxEffect.js" charset="utf-8" ></script>
     @await RenderSectionAsync("Scripts", required: false)
- </body>
+</body>
 </html>

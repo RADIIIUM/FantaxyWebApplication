@@ -1,0 +1,49 @@
+﻿@model FantaxyWebApplication.Models.Entities.PlanetInfo
+@{
+    Layout = "~/Views/Planet/_PlanetMaster.cshtml";
+    string? main = Model?.MainBackground.Replace("\\", "/");
+    string? profile = Model?.ProfileBackground.Replace("\\", "/");
+    string? back1 = $"url(\"{main}\")";
+    string? back2 = $"url(\"{profile}\")";
+}
+
+<style>
+    #navPlanet {
+        background: @Html.Raw(back1);
+    }
+
+    body {
+        background: @Html.Raw(back2);
+        background-size: cover;
+        background-position: center;
+        background-attachment:fixed;
+        background-repeat: no-repeat;
+    }
+</style>
+
+@switch(ViewBag.Page)
+{
+    case "Posts":
+        Html.PartialAsync("Posts");
+        break;
+    case "Users":
+        Html.PartialAsync("Users");
+        break;
+    case "Main":
+        <h2> @Model.PlanetDescription </h2>
+        break;
+    default:
+        <h2> @Model.PlanetDescription </h2>
+        break;
+}
+
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#h2PlanetName').text = @Model.PlanetName;
+        $('#planetAvatar').attr("src", @Model.Avatar);
+    });
+</script>
+<script src="~/js/planet/paralaxEffect.js" charset="utf-8"/>

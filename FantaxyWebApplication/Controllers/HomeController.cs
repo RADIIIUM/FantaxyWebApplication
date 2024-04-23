@@ -114,7 +114,7 @@ namespace FantaxyWebApplication.Controllers
                 GlobalUsersInfo userInfo = new GlobalUsersInfo();
                 userInfo.UserLoginNavigation = u;
                 userInfo.UserName = user.UserLogin;
-                byte[] avatar = HttpContext.Session.Get("RegAvatar");
+                byte[] avatar = HttpContext.Session.Get<byte[]>("RegAvatar");
                 if(avatar != null)
                 {
                     userInfo.Avatar = FileServices.CreateFileFromByteArray(_appEnvironment, avatar, Path.Combine("\\img\\FantasyFiles\\Profiles\\Style\\Globals\\Avatar", $"{user.UserLogin}.jpg"));
@@ -127,7 +127,7 @@ namespace FantaxyWebApplication.Controllers
                 userInfo.ProfileBackground = "\\img\\background\\secondBack.jpg";
 
                 GlobalRoleUser glr = new GlobalRoleUser();
-                glr.IdRole = 3; // 4 - Id номер Пользователя , 3 - Модератор, 2 - Админ, 1 - Главный админ, 5 - Заблокированный
+                glr.IdRole = 4; // 4 - Id номер Пользователя , 3 - Модератор, 2 - Админ, 1 - Главный админ, 5 - Заблокированный
                 glr.UserLoginNavigation = u;
                 await Task.Run(async () =>
                 {
@@ -148,9 +148,10 @@ namespace FantaxyWebApplication.Controllers
         [HttpPost]
         public async Task<IActionResult> UploadImage([FromForm] IFormFile Avatar)
         {
-            byte[] avatar = ImageUpload.UploadImage(Avatar);
+            byte[] ava = ImageUpload.UploadImage(Avatar);
             HttpContext.Session.Remove("RegAvatar");
-            HttpContext.Session.Set<byte[]>("RegAvatar", avatar);
+            HttpContext.Session.Set<byte[]>("RegAvatar", ava);
+
             return View("Registration");
         }
 

@@ -17,9 +17,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\Data\" />
     <Folder Include="wwwroot\img\FantasyFiles\Files\" />
-    <Folder Include="wwwroot\img\FantasyFiles\Images\" />
+    <Folder Include="wwwroot\img\FantasyFiles\Images\Post\" />
     <Folder Include="wwwroot\img\FantasyFiles\Profiles\Chats\Files\" />
     <Folder Include="wwwroot\img\FantasyFiles\Profiles\Chats\Images\" />
     <Folder Include="wwwroot\img\FantasyFiles\Profiles\Posts\Files\" />
@@ -28,6 +27,9 @@
     <Folder Include="wwwroot\img\FantasyFiles\Profiles\Style\Planets\Avatar\" />
     <Folder Include="wwwroot\img\FantasyFiles\Profiles\Style\Planets\Main\" />
     <Folder Include="wwwroot\img\FantasyFiles\Profiles\Style\Planets\Profile\" />
+    <Folder Include="wwwroot\img\FantasyFiles\Profiles\Style\Profiles\Avatar\" />
+    <Folder Include="wwwroot\img\FantasyFiles\Profiles\Style\Profiles\Main\" />
+    <Folder Include="wwwroot\img\FantasyFiles\Profiles\Style\Profiles\Profile\" />
     <Folder Include="wwwroot\img\FantasyFiles\Profiles\TemporaryFiles\" />
   </ItemGroup>
 

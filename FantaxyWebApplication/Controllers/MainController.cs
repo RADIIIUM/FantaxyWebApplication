@@ -28,9 +28,9 @@ namespace FantaxyWebApplication.Controllers
         {
             if (string.IsNullOrEmpty(search))
             {
-                return PartialView(GetPlanetAsync(null));
+                return PartialView(await GetPlanetAsync(""));
             }
-            return PartialView(GetPlanetAsync(search));
+            return PartialView(await GetPlanetAsync(search));
         }
 
         public async Task<IActionResult> UsersPartial(string search)

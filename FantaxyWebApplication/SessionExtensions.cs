@@ -11,6 +11,27 @@ public static class SessionExtensions
     }
 
 
+    public static int? GetInt(this ISession session, string key)
+    {
+        string? valueString = session.GetString(key);
+
+        if (string.IsNullOrEmpty(valueString))
+        {
+            return -1;
+        }
+
+        try
+        {
+            return int.Parse(valueString);
+        }
+        catch (FormatException ex)
+        {
+            // Handle error if required
+            // For example, logging or removing the invalid key
+            session.Remove(key);
+            return -1;
+        }
+    }
     public static T? Get<T>(this ISession session, string key)
     {
         string? valueString = session.GetString(key);

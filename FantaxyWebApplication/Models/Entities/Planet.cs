@@ -8,7 +8,9 @@ namespace FantaxyWebApplication.Models.Entities
         public Planet()
         {
             Chats = new HashSet<Chat>();
+            DisikesPlanets = new HashSet<DisikesPlanet>();
             LikesPlanets = new HashSet<LikesPlanet>();
+            PlanetPlanetRoleUsers = new HashSet<PlanetPlanetRoleUser>();
             PlanetUsers = new HashSet<PlanetUser>();
             PlanetUsersInfos = new HashSet<PlanetUsersInfo>();
             Posts = new HashSet<Post>();
@@ -24,7 +26,9 @@ namespace FantaxyWebApplication.Models.Entities
         public virtual User? OwnerLoginNavigation { get; set; }
         public virtual PlanetInfo? PlanetInfo { get; set; }
         public virtual ICollection<Chat> Chats { get; set; }
+        public virtual ICollection<DisikesPlanet> DisikesPlanets { get; set; }
         public virtual ICollection<LikesPlanet> LikesPlanets { get; set; }
+        public virtual ICollection<PlanetPlanetRoleUser> PlanetPlanetRoleUsers { get; set; }
         public virtual ICollection<PlanetUser> PlanetUsers { get; set; }
         public virtual ICollection<PlanetUsersInfo> PlanetUsersInfos { get; set; }
         public virtual ICollection<Post> Posts { get; set; }

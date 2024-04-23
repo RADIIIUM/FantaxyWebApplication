@@ -6,7 +6,7 @@
 
     string back1 = $"url(\"data:image/jpeg;base64,{(Convert.ToBase64String(Model.Main))}\")";
     string back2 = $"url(\"data:image/jpeg;base64,{(Convert.ToBase64String(Model.Profile))}\")";
- }
+}
 <link rel="stylesheet" href="~/css/profile.css" />
 
 <style>
@@ -29,29 +29,28 @@
 
 <div class="profileImg second-div">
     <div class="div-edit">
-        <form id="profileImgForm" method="post" asp-controller="Profile" asp-action="UploadAvatar" asp-route-tag="_P" enctype="multipart/form-data">
+        <form id="profileImgForm" method="post" asp-controller="Profile" asp-action="UploadAvatarPlanet" asp-route-tag="_P" enctype="multipart/form-data">
             <label class="material-symbols-outlined" data-tooltip="Измененить задний фон профиля" for="profileImgInput">
                 account_circle
             </label>
             <input type="file" id="profileImgInput" name="Avatar" style="display: none;" accept="image/png, image/jpeg" />
-            <input type="hidden" value="_P"  name="tag" style="display: none;"/>
         </form>
 
-        <form id="mainProfileImgForm" method="post" asp-controller="Profile" asp-action="UploadAvatar" asp-route-tag="_M" enctype="multipart/form-data">
+        <form id="mainProfileImgForm" method="post" asp-controller="Profile" asp-action="UploadAvatarPlanet" asp-route-tag="_M" enctype="multipart/form-data">
             <label class="material-symbols-outlined" data-tooltip="Измененить задний фон" for="mainProfileImgInput">
                 image
             </label>
             <input type="file" id="mainProfileImgInput" name="Avatar" style="display: none;" accept="image/png, image/jpeg" />
-            <input type="hidden" value="_M" name="tag" style="display: none;" />
         </form>
 
-        <form id="avaForm" method="post" asp-controller="Profile" asp-action="UploadAvatar" asp-route-tag="_A" enctype="multipart/form-data">
+        <form id="avaForm" method="post" asp-controller="Profile" asp-action="UploadAvatarPlanet" asp-route-tag="_A" enctype="multipart/form-data">
             <label class="material-symbols-outlined" data-tooltip="Измененить аватар пользователя" for="avaFile">
                 face
             </label>
             <input type="file" id="avaFile" name="Avatar" style="display: none;" accept="image/png, image/jpeg" />
-            <input type="hidden" value="_A" name="tag" style="display: none;" />
         </form>
+
+
     </div>
 
     <div class="img">
@@ -65,7 +64,7 @@
 </div>
 <div class="maincontent">
     <form asp-controller="Profile"
-          asp-action="Save" asp-route-model="@Model">
+          asp-action="SavePlanetProfile">
         <h1 style="text-align: center; color: red;"> @ViewBag.Error </h1>
         <h1 style="text-align: center"> Имя </h1>
         <input class="-fillInput -input " type="text" name="Nickname" maxlength="32" placeholder="Ваш никнейм" />

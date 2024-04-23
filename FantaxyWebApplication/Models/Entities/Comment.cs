@@ -8,6 +8,8 @@ namespace FantaxyWebApplication.Models.Entities
         public Comment()
         {
             CommentsFiles = new HashSet<CommentsFile>();
+            DisikesComments = new HashSet<DisikesComment>();
+            LikesComments = new HashSet<LikesComment>();
         }
 
         public int IdComment { get; set; }
@@ -16,5 +18,7 @@ namespace FantaxyWebApplication.Models.Entities
 
         public virtual User? OwnerLoginNavigation { get; set; }
         public virtual ICollection<CommentsFile> CommentsFiles { get; set; }
+        public virtual ICollection<DisikesComment> DisikesComments { get; set; }
+        public virtual ICollection<LikesComment> LikesComments { get; set; }
     }
 }

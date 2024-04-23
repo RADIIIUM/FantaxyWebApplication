@@ -7,12 +7,12 @@ namespace FantaxyWebApplication.Models.Entities
     {
         public PlanetRole()
         {
-            PlanetRoleUsers = new HashSet<PlanetRoleUser>();
+            PlanetPlanetRoleUsers = new HashSet<PlanetPlanetRoleUser>();
         }
 
         public int IdRole { get; set; }
         public string? RoleName { get; set; }
 
-        public virtual ICollection<PlanetRoleUser> PlanetRoleUsers { get; set; }
+        public virtual ICollection<PlanetPlanetRoleUser> PlanetPlanetRoleUsers { get; set; }
     }
 }

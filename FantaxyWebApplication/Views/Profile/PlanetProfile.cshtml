@@ -1,5 +1,117 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model UserModel
+@inject IHttpContextAccessor access
 @{
+    access.HttpContext.Session.Remove("EditProfile");
+
+    Layout = "~/Views/Main/_MainMaster.cshtml";
+
+    ViewData["Title"] = "Fantaxy";
+
+    string? main = Model?.Main.Replace("\\", "/");
+    string? profile = Model?.Profile.Replace("\\", "/");
+    string? back1 = $"url(\"{main}\")";
+    string? back2 = $"url(\"{profile}\")";
 }
+<meta charset="utf-8" />
+<link rel="stylesheet" href="~/css/profile.css" />
+
+<style>
+    body {
+        display: flex;
+        flex-direction: column;
+        background: @Html.Raw(back1);
+        background-attachment: inherit;
+        background-repeat: no-repeat;
+        background-size: cover
+    }
+
+    .profileImg {
+        background: @Html.Raw(back2);
+        background-attachment: inherit;
+        background-repeat: no-repeat;
+        background-size: cover
+    }
+</style>
+
+<div class="profileImg second-div">
+    <div class="div-edit">
+        <a asp-controller="Profile" title="Редактирование профиля" asp-action="EditProfilePlanet">
+            <span class="material-symbols-outlined">
+                edit
+            </span>
+        </a>
+
+    </div>
+    <div class="img">
+        <img id="ava" class="ava" src="@Model.Avatar" />
+    </div>
+
+    <h1> @Model.Name </h1>
+    <div class="divrole">
+        <h2 id="h2Role"> @Model.Role  </h2>
+    </div>
+</div>
+<div class="maincontent">
+    <h1 style="text-align: center"> Описание </h1>
+    <textarea class="desc" readonly maxlength="2000">@Model.Description</textarea>
+
+    <form asp-controller="Home"
+          asp-action="Logout">
+        <input type="submit"
+               class="btn -dark -big" value="Log Out" />
+    </form>
+
+        <input type="button"
+           id="createPostButton"
+               class="btn -dark -big" value="Создать пост" />
+
+</div>
+
+<div id="createPost" class="modal">
+    <div class="modal-content">
+        <form asp-action="CreatePost" asp-controller="Post">
+            <h1>Создать пост </h1>
+            <p> </p>
+            <h2> Заголовок </h2>
+            <input name="Title" type="text" style="color: white;" class="-input -fillInput -big" placeholder="Заголовок"/>
+            <p> Описание поста </p>
+            <textarea name="Desc">  </textarea>
+            <input type="submit" class="-btn -big -light" value="Создать пост"/>
+
+        </form>
+
+
+        <form id="postImgForm" method="post"  enctype="multipart/form-data">
+            <div class="modal-linkButton">
+
+                <label class="material-symbols-outlined" data-tooltip="Загрузить изображение" for="postImgInput">
+                    image
+                </label>
+                <input type="file" id="postImgInput" name="Avatar" style="display: none;" accept="image/png, image/jpeg" />
+
+            </div>
+        </form>
+
+        <div id="modal-images">
+
+        </div>
+
+@*         @if (ViewBag.Images != null && ViewBag.Images.Count != 0)
+        {
+
+            foreach (var image in ViewBag.Images)
+            {
+                <div class="modal-images">
+                    <img class="postImage" src="data:image/jpeg;base64,@(Convert.ToBase64String(image))" />
+                </div>
+            }
+        } *@
+
+    </div>
+</div>
+
+<div>
+
+</div>
+
+<script src="~/js/profile/createPost.js" charset="utf-8" />

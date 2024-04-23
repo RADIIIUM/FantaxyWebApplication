@@ -24,17 +24,24 @@ namespace FantaxyWebApplication.Models.Entities
         public virtual DbSet<ChatsUsersChatRole> ChatsUsersChatRoles { get; set; } = null!;
         public virtual DbSet<Comment> Comments { get; set; } = null!;
         public virtual DbSet<CommentsFile> CommentsFiles { get; set; } = null!;
+        public virtual DbSet<DisikesComment> DisikesComments { get; set; } = null!;
+        public virtual DbSet<DisikesPlanet> DisikesPlanets { get; set; } = null!;
+        public virtual DbSet<DisikesPost> DisikesPosts { get; set; } = null!;
         public virtual DbSet<GlobalRole> GlobalRoles { get; set; } = null!;
         public virtual DbSet<GlobalRoleUser> GlobalRoleUsers { get; set; } = null!;
         public virtual DbSet<GlobalUsersInfo> GlobalUsersInfos { get; set; } = null!;
+        public virtual DbSet<LikesComment> LikesComments { get; set; } = null!;
         public virtual DbSet<LikesPlanet> LikesPlanets { get; set; } = null!;
+        public virtual DbSet<LikesPost> LikesPosts { get; set; } = null!;
         public virtual DbSet<Planet> Planets { get; set; } = null!;
         public virtual DbSet<PlanetInfo> PlanetInfos { get; set; } = null!;
+        public virtual DbSet<PlanetPlanetRoleUser> PlanetPlanetRoleUsers { get; set; } = null!;
         public virtual DbSet<PlanetRole> PlanetRoles { get; set; } = null!;
-        public virtual DbSet<PlanetRoleUser> PlanetRoleUsers { get; set; } = null!;
         public virtual DbSet<PlanetUser> PlanetUsers { get; set; } = null!;
         public virtual DbSet<PlanetUsersInfo> PlanetUsersInfos { get; set; } = null!;
         public virtual DbSet<Post> Posts { get; set; } = null!;
+        public virtual DbSet<PostFile> PostFiles { get; set; } = null!;
+        public virtual DbSet<PostsInfo> PostsInfos { get; set; } = null!;
         public virtual DbSet<Status> Statuses { get; set; } = null!;
         public virtual DbSet<StatusesChat> StatusesChats { get; set; } = null!;
         public virtual DbSet<StatusesPlanet> StatusesPlanets { get; set; } = null!;
@@ -199,6 +206,69 @@ namespace FantaxyWebApplication.Models.Entities
                     .HasConstraintName("FK__CommentsF__IdCom__7F2BE32F");
             });
 
+            modelBuilder.Entity<DisikesComment>(entity =>
+            {
+                entity.HasKey(e => e.IdDislikes)
+                    .HasName("PK__Disikes___20191F71A0A78D45");
+
+                entity.ToTable("Disikes_Comments");
+
+                entity.Property(e => e.LoginOwner).HasMaxLength(50);
+
+                entity.HasOne(d => d.IdCommentNavigation)
+                    .WithMany(p => p.DisikesComments)
+                    .HasForeignKey(d => d.IdComment)
+                    .HasConstraintName("FK__Disikes_C__IdCom__44CA3770");
+
+                entity.HasOne(d => d.LoginOwnerNavigation)
+                    .WithMany(p => p.DisikesComments)
+                    .HasForeignKey(d => d.LoginOwner)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("FK__Disikes_C__Login__43D61337");
+            });
+
+            modelBuilder.Entity<DisikesPlanet>(entity =>
+            {
+                entity.HasKey(e => e.IdDislikes)
+                    .HasName("PK__Disikes___20191F718C27F9AE");
+
+                entity.ToTable("Disikes_Planets");
+
+                entity.Property(e => e.LoginOwner).HasMaxLength(50);
+
+                entity.HasOne(d => d.IdPlanetNavigation)
+                    .WithMany(p => p.DisikesPlanets)
+                    .HasForeignKey(d => d.IdPlanet)
+                    .HasConstraintName("FK__Disikes_P__IdPla__40F9A68C");
+
+                entity.HasOne(d => d.LoginOwnerNavigation)
+                    .WithMany(p => p.DisikesPlanets)
+                    .HasForeignKey(d => d.LoginOwner)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("FK__Disikes_P__Login__40058253");
+            });
+
+            modelBuilder.Entity<DisikesPost>(entity =>
+            {
+                entity.HasKey(e => e.IdDislikes)
+                    .HasName("PK__Disikes___20191F71E2CC6EBA");
+
+                entity.ToTable("Disikes_Posts");
+
+                entity.Property(e => e.LoginOwner).HasMaxLength(50);
+
+                entity.HasOne(d => d.IdPostNavigation)
+                    .WithMany(p => p.DisikesPosts)
+                    .HasForeignKey(d => d.IdPost)
+                    .HasConstraintName("FK__Disikes_P__IdPos__489AC854");
+
+                entity.HasOne(d => d.LoginOwnerNavigation)
+                    .WithMany(p => p.DisikesPosts)
+                    .HasForeignKey(d => d.LoginOwner)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("FK__Disikes_P__Login__47A6A41B");
+            });
+
             modelBuilder.Entity<GlobalRole>(entity =>
             {
                 entity.HasKey(e => e.IdRole)
@@ -255,6 +325,27 @@ namespace FantaxyWebApplication.Models.Entities
                     .HasConstraintName("FK__GlobalUse__UserL__3C69FB99");
             });
 
+            modelBuilder.Entity<LikesComment>(entity =>
+            {
+                entity.HasKey(e => e.IdLikes)
+                    .HasName("PK__Likes_Co__3FDC4886C15FAC00");
+
+                entity.ToTable("Likes_Comments");
+
+                entity.Property(e => e.LoginOwner).HasMaxLength(50);
+
+                entity.HasOne(d => d.IdCommentNavigation)
+                    .WithMany(p => p.LikesComments)
+                    .HasForeignKey(d => d.IdComment)
+                    .HasConstraintName("FK__Likes_Com__IdCom__3A4CA8FD");
+
+                entity.HasOne(d => d.LoginOwnerNavigation)
+                    .WithMany(p => p.LikesComments)
+                    .HasForeignKey(d => d.LoginOwner)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("FK__Likes_Com__Login__395884C4");
+            });
+
             modelBuilder.Entity<LikesPlanet>(entity =>
             {
                 entity.HasKey(e => e.IdLikes)
@@ -274,6 +365,26 @@ namespace FantaxyWebApplication.Models.Entities
                     .HasForeignKey(d => d.LoginOwner)
                     .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK__Likes_Pla__Login__05D8E0BE");
+            });
+
+            modelBuilder.Entity<LikesPost>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToTable("Likes_Posts");
+
+                entity.Property(e => e.LoginOwner).HasMaxLength(50);
+
+                entity.HasOne(d => d.IdPostNavigation)
+                    .WithMany()
+                    .HasForeignKey(d => d.IdPost)
+                    .HasConstraintName("FK__Likes_Pos__IdPos__3D2915A8");
+
+                entity.HasOne(d => d.LoginOwnerNavigation)
+                    .WithMany()
+                    .HasForeignKey(d => d.LoginOwner)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("FK__Likes_Pos__Login__3C34F16F");
             });
 
             modelBuilder.Entity<Planet>(entity =>
@@ -322,6 +433,34 @@ namespace FantaxyWebApplication.Models.Entities
                     .HasConstraintName("FK__PlanetInf__IdPla__14270015");
             });
 
+            modelBuilder.Entity<PlanetPlanetRoleUser>(entity =>
+            {
+                entity.HasKey(e => e.IdPlPlRU)
+                    .HasName("PK__Planet_P__A758ECC190260919");
+
+                entity.ToTable("Planet_PlanetRole_Users");
+
+                entity.Property(e => e.IdPlPlRU).HasColumnName("IdPl_PlR_U");
+
+                entity.Property(e => e.UserLogin).HasMaxLength(50);
+
+                entity.HasOne(d => d.IdPlanetNavigation)
+                    .WithMany(p => p.PlanetPlanetRoleUsers)
+                    .HasForeignKey(d => d.IdPlanet)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("FK__Planet_Pl__IdPla__29221CFB");
+
+                entity.HasOne(d => d.IdRoleNavigation)
+                    .WithMany(p => p.PlanetPlanetRoleUsers)
+                    .HasForeignKey(d => d.IdRole)
+                    .HasConstraintName("FK__Planet_Pl__IdRol__282DF8C2");
+
+                entity.HasOne(d => d.UserLoginNavigation)
+                    .WithMany(p => p.PlanetPlanetRoleUsers)
+                    .HasForeignKey(d => d.UserLogin)
+                    .HasConstraintName("FK__Planet_Pl__UserL__2739D489");
+            });
+
             modelBuilder.Entity<PlanetRole>(entity =>
             {
                 entity.HasKey(e => e.IdRole)
@@ -330,29 +469,6 @@ namespace FantaxyWebApplication.Models.Entities
                 entity.ToTable("PlanetRole");
 
                 entity.Property(e => e.RoleName).HasMaxLength(50);
-            });
-
-            modelBuilder.Entity<PlanetRoleUser>(entity =>
-            {
-                entity.HasKey(e => e.IdPlRU)
-                    .HasName("PK__PlanetRo__475A5094A7C77AB6");
-
-                entity.ToTable("PlanetRole_Users");
-
-                entity.Property(e => e.IdPlRU).HasColumnName("IdPlR_U");
-
-                entity.Property(e => e.UserLogin).HasMaxLength(50);
-
-                entity.HasOne(d => d.IdRoleNavigation)
-                    .WithMany(p => p.PlanetRoleUsers)
-                    .HasForeignKey(d => d.IdRole)
-                    .HasConstraintName("FK__PlanetRol__IdRol__59063A47");
-
-                entity.HasOne(d => d.UserLoginNavigation)
-                    .WithMany(p => p.PlanetRoleUsers)
-                    .HasForeignKey(d => d.UserLogin)
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .HasConstraintName("FK__PlanetRol__UserL__5812160E");
             });
 
             modelBuilder.Entity<PlanetUser>(entity =>
@@ -402,11 +518,13 @@ namespace FantaxyWebApplication.Models.Entities
                 entity.HasOne(d => d.IdPlanetNavigation)
                     .WithMany(p => p.PlanetUsersInfos)
                     .HasForeignKey(d => d.IdPlanet)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK__PlanetUse__IdPla__440B1D61");
 
                 entity.HasOne(d => d.UserLoginNavigation)
                     .WithMany(p => p.PlanetUsersInfos)
                     .HasForeignKey(d => d.UserLogin)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__PlanetUse__UserL__4316F928");
             });
 
@@ -427,6 +545,42 @@ namespace FantaxyWebApplication.Models.Entities
                     .HasForeignKey(d => d.OwnerLogin)
                     .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK__Posts__OwnerLogi__73BA3083");
+            });
+
+            modelBuilder.Entity<PostFile>(entity =>
+            {
+                entity.HasKey(e => e.IdPostFile)
+                    .HasName("PK__PostFile__EB04FDFEF7D89E0E");
+
+                entity.Property(e => e.PathFile).HasMaxLength(1000);
+
+                entity.HasOne(d => d.IdPostNavigation)
+                    .WithMany(p => p.PostFiles)
+                    .HasForeignKey(d => d.IdPost)
+                    .HasConstraintName("FK__PostFiles__IdPos__31B762FC");
+            });
+
+            modelBuilder.Entity<PostsInfo>(entity =>
+            {
+                entity.HasKey(e => e.IdPost)
+                    .HasName("PK__PostsInf__F8DCBD4D5EF84C72");
+
+                entity.ToTable("PostsInfo");
+
+                entity.Property(e => e.IdPost).ValueGeneratedNever();
+
+                entity.Property(e => e.Avatar).HasMaxLength(1000);
+
+                entity.Property(e => e.Background).HasMaxLength(1000);
+
+                entity.Property(e => e.PostText).HasMaxLength(2000);
+
+                entity.Property(e => e.Title).HasMaxLength(50);
+
+                entity.HasOne(d => d.IdPostNavigation)
+                    .WithOne(p => p.PostsInfo)
+                    .HasForeignKey<PostsInfo>(d => d.IdPost)
+                    .HasConstraintName("FK__PostsInfo__IdPos__2EDAF651");
             });
 
             modelBuilder.Entity<Status>(entity =>

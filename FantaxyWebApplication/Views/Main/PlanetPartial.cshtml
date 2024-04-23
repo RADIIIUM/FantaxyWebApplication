@@ -1,31 +1,42 @@
-﻿@model IEnumerable<SearchModel>
+﻿@model IList<SearchModel>
 
-<form id="PlanetForm" method="post" asp-controller="Planet" asp-action="PlanetEntrance">
+<form id="PlanetForm" asp-controller="Planet" asp-action="MainPage">
     @foreach (var planet in Model)
     {
-        string back = $"url(\"{planet?.Profile.Replace("\\", "/")}\")";
-        <div class="Item" id="@Html.Raw(planet.Id)" style="background: @Html.Raw(back) ">
+        string back = planet.Profile.Replace("\\", "/");
+        <div class="Item" id="@Html.Raw(planet.Id)" style="background: @($"url(\"{back}\")");
+        background-size: cover;
+        background-position: center;">
             <img src="@planet.Avatar" />
-            <input type="text" class="h4" readonly maxlenght="15" value="@Html.DisplayFor(modelItem => planet.Name)" />
+            <input type="text" class="h4" readonly maxlenght="15" value="@Html.Raw(planet.Name)" />
             @{
                 switch(planet.RoleOrStatus)
                 {
                     case 1: // Публичный
-                        <span class="roleStatus"> @Html.Raw(planet.RoleOrStatus) </span>
+                        <span class="roleStatus"> Публичный </span>
                         <span class="material-symbols-outlined" style="background: green">
                             groups
                         </span>
                         break;
                     case 2: // Частный
-                        <span class="roleStatus"> @Html.Raw(planet.RoleOrStatus) </span>
+                        <span class="roleStatus"> Частный </span>
                         <span class="material-symbols-outlined" style="background: red">
                             lock
                         </span>
                         break;
                 }
             }
-            <input type="hidden" name="PlanetId" value="@Html.Raw(@planet.Id)" />
-            <input type="hidden" name="PlanetStatus" value="@Html.Raw(@planet.RoleOrStatus)" />
+            <input type="hidden" name="IdPlanet" value="@Html.Raw(@planet.Id)" />
         </div>
     }
 </form>
+
+<script>
+    $(document).ready(function () {
+        $("div.Item").click(function () {
+            $("#PlanetForm").submit();
+        });
+    });
+</script>
+
+@*             <input type="hidden" name="PlanetStatus" value="@Html.Raw(@planet.RoleOrStatus)" /> *@
