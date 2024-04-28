@@ -69,7 +69,7 @@ namespace FantaxyWebApplication.Controllers
             EditModel edit = HttpContext.Session.Get<EditModel>($"EditProfile");
             if (edit != null)
             {
-                if (edit.Avatar != null) userModel.Avatar = FileServices.CreateFileFromByteArray(_appEnvironment, edit.Avatar, Path.Combine("\\img\\FantasyFiles\\Profiles\\Style\\Profiles\\Avatar", $"{userModel}_{IdPlanet}.jpg"));
+                if (edit.Avatar != null) userModel.Avatar = FileServices.CreateFileFromByteArray(_appEnvironment, edit.Avatar, Path.Combine("\\img\\FantasyFiles\\Profiles\\Style\\Profiles\\Avatar", $"{userModel.Login}_{IdPlanet}.jpg"));
                 if (edit.Main != null) userModel.Main = FileServices.CreateFileFromByteArray(_appEnvironment, edit.Main, Path.Combine("\\img\\FantasyFiles\\Profiles\\Style\\Profiles\\Main", $"{userModel.Login}_{IdPlanet}.jpg"));
                 if (edit.Profile != null) userModel.Profile = FileServices.CreateFileFromByteArray(_appEnvironment, edit.Profile, Path.Combine("\\img\\FantasyFiles\\Profiles\\Style\\Profiles\\Profile", $"{userModel.Login}_{IdPlanet}.jpg"));
             }
@@ -165,6 +165,8 @@ namespace FantaxyWebApplication.Controllers
         {
             IdPlanet = HttpContext.Session.Get<int>("PlanetId");
             HttpContext.Session.Remove("EditProfile");
+            HttpContext.Session.Remove("PostImages");
+
             var json = HttpContext.Request.Cookies[$"Profile_{IdPlanet}"];
 
             if (json != null)

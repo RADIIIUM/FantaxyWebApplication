@@ -14,6 +14,7 @@
 }
 <meta charset="utf-8" />
 <link rel="stylesheet" href="~/css/profile.css" />
+<link rel="stylesheet" href="~/css/posts/post.css" />
 
 <style>
     body {
@@ -55,21 +56,16 @@
     <h1 style="text-align: center"> Описание </h1>
     <textarea class="desc" readonly maxlength="2000">@Model.Description</textarea>
 
-    <form asp-controller="Home"
-          asp-action="Logout">
-        <input type="submit"
-               class="btn -dark -big" value="Log Out" />
-    </form>
-
         <input type="button"
            id="createPostButton"
+           style="width: 65%"
                class="btn -dark -big" value="Создать пост" />
 
 </div>
 
 <div id="createPost" class="modal">
     <div class="modal-content">
-        <form asp-action="CreatePost" asp-controller="Post">
+        <form id="postForm" asp-action="CreatePost" asp-controller="Post">
             <h1>Создать пост </h1>
             <p> </p>
             <h2> Заголовок </h2>
@@ -96,22 +92,10 @@
 
         </div>
 
-@*         @if (ViewBag.Images != null && ViewBag.Images.Count != 0)
-        {
-
-            foreach (var image in ViewBag.Images)
-            {
-                <div class="modal-images">
-                    <img class="postImage" src="data:image/jpeg;base64,@(Convert.ToBase64String(image))" />
-                </div>
-            }
-        } *@
-
     </div>
 </div>
 
-<div>
-
+<div class="postList">
 </div>
 
 <script src="~/js/profile/createPost.js" charset="utf-8" />

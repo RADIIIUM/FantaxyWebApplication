@@ -1,10 +1,17 @@
 ﻿@using System.Text.Json;
 @using FantaxyWebApplication.Models.Entities;
+
 @inject IHttpContextAccessor HttpContextAccessor
 @{
     var json = HttpContextAccessor.HttpContext.Request.Cookies["UserInfo"];
-  
+    int? IdPlanet = HttpContextAccessor.HttpContext.Session.GetInt("PlanetId");
+    var json2 = HttpContextAccessor.HttpContext.Request.Cookies[$"Planet_{IdPlanet}"];
+    string? main = "";
+    string? profile = "";
+    string? back1 = "";
+    string? back2 = "";
     UserModel? userModel = new UserModel();
+    PlanetInfo planetInfo = new PlanetInfo();
     if (json != null)
     {
         userModel = JsonSerializer.Deserialize<UserModel>(json);
@@ -13,6 +20,17 @@
     else
     {
         userModel.Avatar = "\\img\\icon\\stdAvatar.png";
+    }
+    if(json2 != null)
+    {
+        planetInfo = JsonSerializer.Deserialize<PlanetInfo>(json2);
+        if (planetInfo != null)
+        {
+            main = planetInfo?.MainBackground.Replace("\\", "/");
+            profile = planetInfo?.ProfileBackground.Replace("\\", "/");
+            back1 = $"url(\"{main}\")";
+            back2 = $"url(\"{profile}\")";
+        }
     }
 }
 
@@ -29,9 +47,27 @@
     <link rel="stylesheet" href="~/css/navbar.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/FantaxyWebApplication.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/planets/mainPage.css" asp-append-version="true" />
+
+    <script src="../../Scripts/MicrosoftAjax.js" type="text/javascript"></script>
+    <script src="../../Scripts/MicrosoftMvcAjax.js" type="text/javascript"></script>
+
 </head>
 
 <body>
+    <style>
+        #navPlanet {
+            background: @Html.Raw(back1);
+        }
+
+        body {
+            background: @Html.Raw(back2);
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+        }
+    </style>
+
     <div id="mySidenav" class="sidenav">
         <div class="navdiv2">
             <a asp-controller="Profile" asp-action="MainProfile" asp-route-edit="false">
@@ -104,15 +140,15 @@
             </div>
             <nav id="navPlanet">
                 <div id="navContent">
-                    <img id="planetAvatar" src="@Model.Avatar" />
-                    <h2 id="h2PlanetName"> @Model.PlanetName </h2>
+                    <img id="planetAvatar" src="@planetInfo.Avatar" />
+                    <h2 id="h2PlanetName"> @planetInfo.PlanetName </h2>
                     <label id="clikme"> [Нажми на меня] </label>
                 </div>
 
                 <div id="navLink">
                     <a asp-action="MainPage" asp-controller="Planet" asp-route-page="Main"> Главная страница </a>
-                    <a asp-action="MainPage" asp-controller="Planet" asp-route-page="Posts"> Посты </a>
-                    <a> Чаты </a>
+                    <a asp-action="Posts" asp-controller="Planet"> Посты </a>
+                    <a asp-action="ChatList" asp-controller="Chat"> Чаты </a>
                     <a> Пользователи </a>
                 </div>
             </nav>

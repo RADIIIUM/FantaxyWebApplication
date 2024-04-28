@@ -1,0 +1,26 @@
+﻿@model ChatModel
+
+@{
+    Layout = "~/Views/Main/_MainMaster.cshtml";
+}
+
+
+<link rel="stylesheet" href="~/css/chats/chatInfo.css" asp-append-version="true" />
+
+<div id="chatroom">
+
+</div>
+
+<div id="inputForm">
+        <input type="text" class="-input -fillInput" id="message" name="message" />
+        <input type="button" class="-btn -dark" id="sendBtn" value="Отправить" disabled="disabled" />
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="~/js/signalr/dist/browser/signalr.min.js"></script>
+<script src="~/js/chat/getMessage.js"></script>
+
+<script>
+
+</script>

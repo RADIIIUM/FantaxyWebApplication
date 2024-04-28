@@ -1,5 +1,49 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@model IList<PostModel>
+
+@foreach (var post in Model)
+{
+    <div class="post">
+        <div class="post-author">
+            <img src="@post.authorInfo.Avatar" />
+            <h5> @post.authorInfo.UserName </h5>
+        </div>
+
+        <h1> @post.Title </h1>
+        <textarea readonly> @post.Description </textarea>
+
+        <div class="post-likes-dislikes">
+            <button id="likeBtn">
+                <span class="material-symbols-outlined">
+                    thumb_up
+                </span>
+            </button>
+            <span style="color: white;
+                         font-family:'Sansation Light' ">
+                <span style="color: white;
+            font-family:'Sansation Light'">
+                    @post.LikeCount
+                </span>
+                     </span>
+
+
+            <button id="dislikeBtn">
+                <span style="color: white;
+            font-family:'Sansation Light'">
+                    @post.DislikeCount
+                </span>
+            </button>
+        </div>
+
+        <div class="post-images">
+            @if(post.Files != null)
+            {
+                foreach (var image in post.Files)
+                {
+                    <img src="@image" />
+                }
+            }
+        </div>
+
+    </div>
 }
+

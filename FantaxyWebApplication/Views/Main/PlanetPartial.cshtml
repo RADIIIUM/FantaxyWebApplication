@@ -1,6 +1,6 @@
 ﻿@model IList<SearchModel>
 
-<form id="PlanetForm" asp-controller="Planet" asp-action="MainPage">
+<form id="PlanetForm" asp-controller="Main" asp-action="RedirectToPlanetPage">
     @foreach (var planet in Model)
     {
         string back = planet.Profile.Replace("\\", "/");

@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", function () {
     var postImgForm = document.getElementById('postImgForm');
     var modalImages = document.getElementById('modal-images');
     var postImgInput = document.getElementById('postImgInput');
-    
+
 
     // Обработчик события для загрузки изображений
     postImgInput.addEventListener('change', function (event) {
@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         var postImgForm = document.getElementById('postImgForm');
         var formData = new FormData(postImgForm);
-
+            var images = [];
         fetch('/Post/PostUploadFile', { // Адрес должен соответствовать вашему маршруту
             method: 'POST',
             body: formData
@@ -31,9 +31,11 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
 
+
     // Функция для обновления изображений на странице
     function updateImages(images) {
         if (checkImageCount()) {
+            modalImages.innerHTML = "";
             images.forEach(image => { // Ограничиваем количество изображений тремя
                 var imgElement = document.createElement('img');
                 imgElement.classList.add('postImage');

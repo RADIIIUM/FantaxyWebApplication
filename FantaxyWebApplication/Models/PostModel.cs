@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using FantaxyWebApplication.Models.Entities;
 
 namespace FantaxyWebApplication.Models
 {
@@ -8,11 +9,10 @@ namespace FantaxyWebApplication.Models
         public string? Title { get; set; }
         public string Description { get; set; } = "Новый пост";
 
-        public string? AuthorLogin { get; set; }
-        public string? AuthorImagePath { get; set; }
+        public PlanetUsersInfo authorInfo { get; set; }
         public int LikeCount { get; set; }
         public int DislikeCount { get; set; }
-
+        public List<string>? Files { get; set; }
         public bool IsPined { get; set; } = false;
     }
 }

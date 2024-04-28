@@ -1,0 +1,22 @@
+﻿@{
+    Layout = "~/Views/Planet/_PlanetMaster.cshtml";
+}
+
+<link rel="stylesheet" href="~/css/chats/chat.css" />
+
+<a class="-btn -dark" 
+        style="display: block;
+               width: 75%;
+               margin-right: auto;
+               margin-left: auto;"
+        asp-action="CreateChat"
+        asp-controller="Chat"> 
+Создать свой чат </a>
+
+
+<div class="chatList">
+
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="~/js/chat/chatGenerate.js" charset="utf-8"></script>

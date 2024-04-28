@@ -1,3 +1,4 @@
+using FantaxyWebApplication;
 using FantaxyWebApplication.Models.Entities;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Caching.Memory;
@@ -18,9 +19,14 @@ builder.Services.AddSession(options =>
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
         .AddCookie(options => //CookieAuthenticationOptions
         {
+
             options.Cookie.Name = "User";
             options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Home/Index");
         });
+
+builder.Services.AddSignalR();
+
+
 builder.Services.AddControllersWithViews();
 builder.Services.AddAuthorization();
 builder.Services.AddHttpContextAccessor();
@@ -37,11 +43,31 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseSession();
+
+
 app.UseRouting();
 app.UseAuthentication();    // аутентификация
 app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+
+/* SIGNALR Services */
+app.UseDeveloperExceptionPage();
+
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
+app.UseRouting();
+
+app.MapHub<ChatHub>("/Chat/Chatter");
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+});
+/* SIGNALR Services */
+
 
 app.Run();

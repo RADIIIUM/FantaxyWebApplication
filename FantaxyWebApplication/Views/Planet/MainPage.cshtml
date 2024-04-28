@@ -7,37 +7,7 @@
     string? back2 = $"url(\"{profile}\")";
 }
 
-<style>
-    #navPlanet {
-        background: @Html.Raw(back1);
-    }
-
-    body {
-        background: @Html.Raw(back2);
-        background-size: cover;
-        background-position: center;
-        background-attachment:fixed;
-        background-repeat: no-repeat;
-    }
-</style>
-
-@switch(ViewBag.Page)
-{
-    case "Posts":
-        Html.PartialAsync("Posts");
-        break;
-    case "Users":
-        Html.PartialAsync("Users");
-        break;
-    case "Main":
-        <h2> @Model.PlanetDescription </h2>
-        break;
-    default:
-        <h2> @Model.PlanetDescription </h2>
-        break;
-}
-
-
+<h2> @Model.PlanetDescription </h2>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>

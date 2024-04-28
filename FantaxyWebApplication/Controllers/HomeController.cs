@@ -190,6 +190,7 @@ namespace FantaxyWebApplication.Controllers
                 {
                     GlobalUsersInfo glu = await _db.GlobalUsersInfos.FirstOrDefaultAsync(x => x.UserLogin == user.UserLogin);
                     UserModel us = new UserModel();
+
                     us.Name = glu.UserName;
                     us.Avatar = glu.Avatar;
                     us.Main = glu.MainBackground;
@@ -200,10 +201,8 @@ namespace FantaxyWebApplication.Controllers
                     us.Telephone = glu.UserTelephone;
                     us.Role = await GetRole(glu);
                     // аутентификация
-                   
-                    var options = new JsonSerializerOptions { ReferenceHandler = ReferenceHandler.Preserve };
-                    var json = JsonSerializer.Serialize<UserModel>(us, options);
-  
+                  
+                    var json = JsonSerializer.Serialize<UserModel>(us);
                     HttpContext.Response.Cookies.Append("UserInfo", json);
                     await Authenticate(user.UserLogin);
                     return Redirect("/Main/Users");
@@ -235,7 +234,11 @@ namespace FantaxyWebApplication.Controllers
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            HttpContext.Response.Cookies.Delete("UserInfo");
+            foreach (var cookie in Request.Cookies.Keys)
+            {
+                Response.Cookies.Delete(cookie);
+            }
+            HttpContext.Session.Clear();
             return RedirectToAction("Index", "Home");
         }
 

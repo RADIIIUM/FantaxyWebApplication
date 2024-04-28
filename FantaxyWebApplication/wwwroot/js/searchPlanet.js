@@ -1,6 +1,3 @@
-
-
-
 $(document).ready(function () {
     // Get the search input element
     // Set up click handlers for the links

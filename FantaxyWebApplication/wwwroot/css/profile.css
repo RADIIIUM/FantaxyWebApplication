@@ -3,6 +3,12 @@
     height: calc(var(--index) * 15);
     border-radius: 50%;
 }
+body {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
 
 .img {
     border-radius: 50%;

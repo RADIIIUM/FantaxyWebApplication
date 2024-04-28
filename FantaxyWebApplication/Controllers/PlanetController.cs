@@ -14,36 +14,36 @@ namespace FantaxyWebApplication.Controllers
 
         FantaxyContext _db;
         IWebHostEnvironment _appEnvironment;
-        IList<PostModel> PostList;
+
         public PlanetController(FantaxyContext db, IWebHostEnvironment appEnvironment)
         {
             _db = db;
             _appEnvironment = appEnvironment;
         }
 
-        public async Task<IActionResult> Posts(int IdPlanet)
+        public IActionResult Posts()
         {
             return View();
-            //IdPlanet = HttpContext.Session.Get<int>("PlanetId");
-            //var postList = _db.Posts.Where(x => x.IdPlanet == IdPlanet).Select(x => x.IdPost).ToList();
-            //this.PostList = await _db.PostsInfos.Where(x => postList.Contains(x.IdPost)).Select(x => new PostModel()
-            //{
-            //    IdPost = x.IdPost,
-            //    Title = x.Title,
-            //    Description = x.PostText,
-            //    AuthorLogin = postList.FirstOrDefault(y => y == x.IdPost).Select("User")
-            //}).ToListAsync();
+        }
+        public async Task<IActionResult> PostList(int IdPlanet)
+        {
+            IdPlanet = HttpContext.Session.Get<int>("PlanetId");
+            var posts = from p in _db.Posts where p.IdPlanet == IdPlanet
+                                          join u in _db.PlanetUsersInfos on p.OwnerLogin equals u.UserLogin into up
+                                          from u in up.DefaultIfEmpty()
+                                          select new PostModel()
+                                          {
+                                              IdPost = p.IdPost,
+                                              Title = p.PostsInfo.Title,
+                                              Description = p.PostsInfo.PostText,
+                                              Files = _db.PostFiles.Where(x => x.IdPost == p.IdPost).Select(x => x.PathFile).ToList<string>(),
+                                              authorInfo = u,
+                                              LikeCount = _db.LikesPosts.Count(y => y.IdPost == p.IdPost),
+                                              DislikeCount = _db.DisikesPosts.Count(y => y.IdPost == p.IdPost),
+                                          };
 
-            //this.PostList = await _db.PostsInfos.Where(x => x.IdPlanet == IdPlanet).Select(async x => new PostModel()
-            //{
-            //    IdPost = x.IdPost,
-            //    Title = x.Title,
-            //    Description = x.DescriptionPost,
-            //    AuthorLogin = x.OwnerLogin,
-
-
-            //}).ToListAsync();
-            //return View(this.PostList);
+            IList<PostModel> list = await posts.AsNoTracking().ToListAsync();
+            return PartialView(list);
         }
 
         public async Task<int?> GetIdPlanet(int? IdPlanet)
@@ -60,66 +60,82 @@ namespace FantaxyWebApplication.Controllers
                 return id;
             }
         }
-        public async Task<IActionResult> MainPage(int? IdPlanet, string? page)
+        public async Task<IActionResult> MainPage()
         {
-            if(string.IsNullOrEmpty(ViewBag.Page))
-            {
-                ViewBag.Page = string.IsNullOrEmpty(page) ? "Main" : page;
-            }
-
-            var usInfo = HttpContext.Request.Cookies["UserInfo"];
-            UserModel? user = JsonSerializer.Deserialize<UserModel>(usInfo);
-            IdPlanet = await GetIdPlanet(IdPlanet);
-
-           HttpContext.Session.Set("PlanetId", IdPlanet);
-            
+            int? IdPlanet = HttpContext.Session.Get<int>("PlanetId");
             var cookie = HttpContext.Request.Cookies[$"Planet_{IdPlanet}"];
-            if(cookie != null)
+            PlanetInfo? plInfo = JsonSerializer.Deserialize<PlanetInfo>(cookie) ?? null;
+            if (plInfo == null)
             {
-                UserModel? userModel = new UserModel();
+                return NotFound();
+            }
+            else
+            {
                 var json = HttpContext.Request.Cookies[$"Profile_{IdPlanet}"];
-                if(json == null)
+                UserModel? userModel = JsonSerializer.Deserialize<UserModel>(json);
+
+                if (userModel != null)
                 {
-                    PlanetUsersInfo glu = await _db.PlanetUsersInfos.FirstOrDefaultAsync(x => x.UserLogin == user.Login && x.IdPlanet == IdPlanet);
-                    userModel.Name = glu.UserName;
-                    userModel.Avatar = glu.Avatar;
-                    userModel.Main = glu.MainBackground;
-                    userModel.Profile = glu.ProfileBackground;
-                    userModel.Description = glu.UserDescription;
-                    userModel.Login = glu.UserLogin;
-                    userModel.Role = await GetRole(glu, IdPlanet);
-                    var serialize = JsonSerializer.Serialize<UserModel>(userModel);
-                    HttpContext.Response.Cookies.Append($"Profile_{IdPlanet}", serialize);
-                    
+                    return View(plInfo);
                 }
-                HttpContext.Session.Set("Access", userModel.Role);
-                PlanetInfo js = JsonSerializer.Deserialize<PlanetInfo>(cookie);
-                return View(js);
-            }
-            PlanetInfo? plInfo = await _db.PlanetInfos.FirstOrDefaultAsync(x => x.IdPlanet == IdPlanet);
-            if(plInfo != null)
-            {
-                var json = JsonSerializer.Serialize<PlanetInfo>(plInfo);
-                HttpContext.Response.Cookies.Append($"Planet_{IdPlanet}", json);
-                json = HttpContext.Request.Cookies[$"Profile_{IdPlanet}"];
-                UserModel? userModel = new UserModel();
-                if (json == null)
+                else
                 {
-                    PlanetUsersInfo glu = await _db.PlanetUsersInfos.FirstOrDefaultAsync(x => x.UserLogin == user.Login && x.IdPlanet == IdPlanet);
-                    userModel.Name = glu.UserName;
-                    userModel.Avatar = glu.Avatar;
-                    userModel.Main = glu.MainBackground;
-                    userModel.Profile = glu.ProfileBackground;
-                    userModel.Description = glu.UserDescription;
-                    userModel.Login = glu.UserLogin;
-                    userModel.Role = await GetRole(glu, IdPlanet);
-                    var serialize = JsonSerializer.Serialize<UserModel>(userModel);
-                    HttpContext.Response.Cookies.Append($"Profile_{IdPlanet}", serialize);
+                    return NotFound();
                 }
-                HttpContext.Session.Set("Access", userModel.Role);
-                return View(plInfo);
             }
-            return Redirect("/Main/Planets");
+
+            //var usInfo = HttpContext.Request.Cookies["UserInfo"];
+            //UserModel? user = JsonSerializer.Deserialize<UserModel>(usInfo);
+            //IdPlanet = await GetIdPlanet(IdPlanet);
+
+            //HttpContext.Session.Set("PlanetId", IdPlanet);
+            //var cookie = HttpContext.Request.Cookies[$"Planet_{IdPlanet}"];
+            //if (cookie != null)
+            //{
+            //    UserModel? userModel = new UserModel();
+            //    var json = HttpContext.Request.Cookies[$"Profile_{IdPlanet}"];
+            //    if (json == null)
+            //    {
+            //        PlanetUsersInfo glu = await _db.PlanetUsersInfos.FirstOrDefaultAsync(x => x.UserLogin == user.Login && x.IdPlanet == IdPlanet);
+            //        userModel.Name = glu.UserName;
+            //        userModel.Avatar = glu.Avatar;
+            //        userModel.Main = glu.MainBackground;
+            //        userModel.Profile = glu.ProfileBackground;
+            //        userModel.Description = glu.UserDescription;
+            //        userModel.Login = glu.UserLogin;
+            //        userModel.Role = await GetRole(glu, IdPlanet);
+            //        var serialize = JsonSerializer.Serialize<UserModel>(userModel);
+            //        HttpContext.Response.Cookies.Append($"Profile_{IdPlanet}", serialize);
+
+            //    }
+            //    HttpContext.Session.Set("Access", userModel.Role);
+            //    PlanetInfo js = JsonSerializer.Deserialize<PlanetInfo>(cookie);
+            //    return View(js);
+            //}
+            //PlanetInfo? plInfo = await _db.PlanetInfos.FirstOrDefaultAsync(x => x.IdPlanet == IdPlanet);
+            //if (plInfo != null)
+            //{
+            //    var json = JsonSerializer.Serialize<PlanetInfo>(plInfo);
+            //    HttpContext.Response.Cookies.Append($"Planet_{IdPlanet}", json);
+            //    json = HttpContext.Request.Cookies[$"Profile_{IdPlanet}"];
+            //    UserModel? userModel = new UserModel();
+            //    if (json == null)
+            //    {
+            //        PlanetUsersInfo glu = await _db.PlanetUsersInfos.FirstOrDefaultAsync(x => x.UserLogin == user.Login && x.IdPlanet == IdPlanet);
+            //        userModel.Name = glu.UserName;
+            //        userModel.Avatar = glu.Avatar;
+            //        userModel.Main = glu.MainBackground;
+            //        userModel.Profile = glu.ProfileBackground;
+            //        userModel.Description = glu.UserDescription;
+            //        userModel.Login = glu.UserLogin;
+            //        userModel.Role = await GetRole(glu, IdPlanet);
+            //        var serialize = JsonSerializer.Serialize<UserModel>(userModel);
+            //        HttpContext.Response.Cookies.Append($"Profile_{IdPlanet}", serialize);
+            //    }
+            //    HttpContext.Session.Set("Access", userModel.Role);
+            //    return View(plInfo);
+            //}
+            //return Redirect("/Main/Planets");
 
         }
 

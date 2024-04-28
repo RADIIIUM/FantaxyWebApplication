@@ -7,6 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\js\postGenerate.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="wwwroot\js\postGenerate.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Common" Version="6.0.28" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.28" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.28">
@@ -23,6 +32,8 @@
     <Folder Include="wwwroot\img\FantasyFiles\Profiles\Chats\Images\" />
     <Folder Include="wwwroot\img\FantasyFiles\Profiles\Posts\Files\" />
     <Folder Include="wwwroot\img\FantasyFiles\Profiles\Posts\Images\" />
+    <Folder Include="wwwroot\img\FantasyFiles\Profiles\Style\Chats\Main\" />
+    <Folder Include="wwwroot\img\FantasyFiles\Profiles\Style\Chats\Profile\" />
     <Folder Include="wwwroot\img\FantasyFiles\Profiles\Style\Globals\Profile\" />
     <Folder Include="wwwroot\img\FantasyFiles\Profiles\Style\Planets\Avatar\" />
     <Folder Include="wwwroot\img\FantasyFiles\Profiles\Style\Planets\Main\" />
@@ -31,6 +42,11 @@
     <Folder Include="wwwroot\img\FantasyFiles\Profiles\Style\Profiles\Main\" />
     <Folder Include="wwwroot\img\FantasyFiles\Profiles\Style\Profiles\Profile\" />
     <Folder Include="wwwroot\img\FantasyFiles\Profiles\TemporaryFiles\" />
+    <Folder Include="wwwroot\js\signalr\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\js\post\postGenerate.js" />
   </ItemGroup>
 
 </Project>

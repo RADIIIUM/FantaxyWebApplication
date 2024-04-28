@@ -1,0 +1,50 @@
+﻿#chatroom {
+    display: block;
+    margin-right: auto;
+    margin-left: auto;
+    width: 80%;
+    padding: 10px;
+}
+    .mess {
+        margin-top: 20px;
+        padding: 10px;
+        border-radius: 30px;
+    }
+
+    .mess .messInfo {
+        color: white;
+        padding: 3px;
+    }
+
+.mess .messAuthor {
+}
+
+.messAuthor img {
+    border-radius: 50%;
+    margin-right: 10px;
+    display: inline;
+    width: calc(var(--index) * 2);
+}
+
+.messAuthor h5 {
+    display: inline-block;
+    text-decoration: underline;
+    font-family: 'Sansation Light';
+    color: white;
+}
+
+
+#inputForm {
+    text-align: center;
+    display: block;
+    margin-right: auto;
+    margin-left: auto;
+    position: fixed;
+    bottom: 0;
+    padding: 20px;
+    width: 100%;
+}
+
+    #inputForm input[type="text"] {
+        width: 75%;
+    }
