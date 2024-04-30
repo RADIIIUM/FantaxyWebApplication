@@ -62,8 +62,8 @@ namespace FantaxyWebApplication.Controllers
                             from p in _db.ChatMessages where p.IdChat == model.IdChat
                             select new MessageModel()
                             {
-                                Owner = _db.PlanetUsersInfos.FirstOrDefault(x => x.UserLogin == p.LoginOwner).UserName,
-                                Avatar = _db.PlanetUsersInfos.FirstOrDefault(x => x.UserLogin == p.LoginOwner).Avatar,
+                                owner = _db.PlanetUsersInfos.FirstOrDefault(x => x.UserLogin == p.LoginOwner).UserName,
+                                avatar = _db.PlanetUsersInfos.FirstOrDefault(x => x.UserLogin == p.LoginOwner).Avatar,
                                 message = p.MessageText,
                                 IsAuthor = (p.LoginOwner == userModel.Login ?  true : false),
                             };
@@ -93,7 +93,14 @@ namespace FantaxyWebApplication.Controllers
                     cm.LoginOwner = userModel.Login;
                     _db.ChatMessages.Add(cm);
                     await _db.SaveChangesAsync();
-                    return Json(new { success = true, ownerAvatar = userModel.Avatar, ownerName = userModel.Name });
+                    MessageModel responseMessage = new MessageModel
+                    {
+                        avatar = userModel.Avatar,
+                        owner = userModel.Name,
+                        message = message.message
+                    };
+
+                    return Json(responseMessage);
                 }
             }
             return Json(new { success = false });

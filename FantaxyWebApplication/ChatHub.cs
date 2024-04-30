@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using FantaxyWebApplication.Models;
+using Microsoft.AspNetCore.SignalR;
 
 namespace FantaxyWebApplication
 {
     public class ChatHub : Hub
     {
-        public async Task Send(string message)
+        public async Task Send(MessageModel message)
         {
             await this.Clients.All.SendAsync("Receive", message);
         }

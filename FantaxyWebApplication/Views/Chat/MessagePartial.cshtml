@@ -2,12 +2,10 @@
 
 @foreach(var message in Model)
 {
-    string back = (message.IsAuthor == true ? "#f700ec" : "#420082");
-
-    <div class="mess" style="background:@back">
+    <div class="mess" style="background:#420082">
         <div class="messAuthor">
-            <img src="@message.Avatar" />
-            <h5> @message.Owner </h5>
+            <img src="@message.avatar" />
+            <h5> @message.owner </h5>
         </div>
         <div class="messInfo">
             <p> @message.message </p>
