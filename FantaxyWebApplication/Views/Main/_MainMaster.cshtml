@@ -44,38 +44,13 @@
                 </a>
 
             </div>
-            <img src="/img/icon/Planet.png" />
-            <img src="/img/icon/Planet.png" />
-            <img src="/img/icon/Planet.png" />
-
-            <img src="/img/icon/Planet.png" />
-            <img src="/img/icon/Planet.png" />
-            <img src="/img/icon/Planet.png" />
-
-            <img src="/img/icon/Planet.png" />
-            <img src="/img/icon/Planet.png" />
-            <img src="/img/icon/Planet.png" />
-
-            <img src="/img/icon/Planet.png" />
-            <img src="/img/icon/Planet.png" />
-            <img src="/img/icon/Planet.png" />
-
-            <img src="/img/icon/Planet.png" />
-            <img src="/img/icon/Planet.png" />
-            <img src="/img/icon/Planet.png" />
-
-            <img src="/img/icon/Planet.png" />
-            <img src="/img/icon/Planet.png" />
-            <img src="/img/icon/Planet.png" />
-
-            <img src="/img/icon/Planet.png" />
-            <img src="/img/icon/Planet.png" />
-            <img src="/img/icon/Planet.png" />
-
-            <img src="/img/icon/Planet.png" />
-            <img src="/img/icon/Planet.png" />
-            <img src="/img/icon/Planet.png" />
-
+            <form asp-action="RedirectToPlanetPage" asp-controller="Main">
+                @foreach (var planet in userModel.planetList)
+                {
+                    <img src="@planet.Avatar" class="planetItemList" />
+                    <input type="hidden" value="@planet.IdPlanet" name="IdPlanet"/>
+                }
+            </form>
             <p></p>
         </div>
     </div>
@@ -97,6 +72,14 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/navbar.js"></script>
+    <script>
+        document.querySelectorAll('.planetItemList').forEach(img => {
+            img.addEventListener('click', event => {
+                event.target.parentNode.submit();
+            });
+        });
+    </script>
+
     @await RenderSectionAsync("Scripts", required: false)
  </body>
 </html>

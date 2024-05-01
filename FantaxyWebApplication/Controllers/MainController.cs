@@ -72,34 +72,6 @@ namespace FantaxyWebApplication.Controllers
             UserModel? user = JsonSerializer.Deserialize<UserModel>(usInfo);
             IdPlanet = await GetIdPlanet(IdPlanet);
             HttpContext.Session.Set("PlanetId", IdPlanet);
-
-            var cookie = HttpContext.Request.Cookies[$"Planet_{IdPlanet}"];
-            if (cookie != null)
-            {
-                UserModel? userModel = new UserModel();
-                var json = HttpContext.Request.Cookies[$"Profile_{IdPlanet}"];
-                if (json == null)
-                {
-                    PlanetUsersInfo? glu = await _db.PlanetUsersInfos.FirstOrDefaultAsync(x => x.UserLogin == user.Login && x.IdPlanet == IdPlanet);
-                    if(glu == null)
-                    {
-                        glu = await CreateProfile(IdPlanet);
-                    }
-                    userModel.Name = glu.UserName;
-                    userModel.Avatar = glu.Avatar;
-                    userModel.Main = glu.MainBackground;
-                    userModel.Profile = glu.ProfileBackground;
-                    userModel.Description = glu.UserDescription;
-                    userModel.Login = glu.UserLogin;
-                    userModel.Role = await GetRole(glu, IdPlanet);
-                    var serialize = JsonSerializer.Serialize<UserModel>(userModel);
-                    HttpContext.Response.Cookies.Append($"Profile_{IdPlanet}", serialize);
-
-                }
-                HttpContext.Session.Set("Access", userModel.Role);
-                PlanetInfo js = JsonSerializer.Deserialize<PlanetInfo>(cookie);
-                return Redirect("/Planet/MainPage");
-            }
             PlanetInfo? plInfo = await _db.PlanetInfos.FirstOrDefaultAsync(x => x.IdPlanet == IdPlanet);
             if (plInfo != null)
             {
@@ -109,6 +81,7 @@ namespace FantaxyWebApplication.Controllers
                 UserModel? userModel = new UserModel();
                 if (json == null)
                 {
+
                     PlanetUsersInfo? glu = await _db.PlanetUsersInfos.FirstOrDefaultAsync(x => x.UserLogin == user.Login && x.IdPlanet == IdPlanet);
                     if (glu == null)
                     {
@@ -123,6 +96,7 @@ namespace FantaxyWebApplication.Controllers
                     userModel.Role = await GetRole(glu, IdPlanet);
                     var serialize = JsonSerializer.Serialize<UserModel>(userModel);
                     HttpContext.Response.Cookies.Append($"Profile_{IdPlanet}", serialize);
+                    HttpContext.Session.Set("Access", userModel.Role);
 
                 }
                 HttpContext.Session.Set("Access", userModel.Role);

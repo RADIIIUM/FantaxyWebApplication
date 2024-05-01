@@ -14,5 +14,6 @@ namespace FantaxyWebApplication.Models
         public int DislikeCount { get; set; }
         public List<string>? Files { get; set; }
         public bool IsPined { get; set; } = false;
+        public bool? IsLiked { get; set; } = null;
     }
 }

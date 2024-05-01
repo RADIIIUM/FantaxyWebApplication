@@ -200,8 +200,16 @@ namespace FantaxyWebApplication.Controllers
                     us.Email = glu.UserEmail;
                     us.Telephone = glu.UserTelephone;
                     us.Role = await GetRole(glu);
+                    var planetList = (from p in _db.PlanetUsersInfos
+                                      where p.UserLogin == user.UserLogin
+                                      join pln in _db.PlanetInfos on p.IdPlanet equals pln.IdPlanet into planet
+                                      from pln in planet.DefaultIfEmpty()
+                                      select pln).ToList();
+                    us.planetList = planetList;
+
+
                     // аутентификация
-                  
+
                     var json = JsonSerializer.Serialize<UserModel>(us);
                     HttpContext.Response.Cookies.Append("UserInfo", json);
                     await Authenticate(user.UserLogin);

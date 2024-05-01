@@ -1,0 +1,113 @@
+﻿@model CreatePlanetModel
+@{
+    Layout = "~/Views/Main/_MainMaster.cshtml";
+
+    ViewData["Title"] = "Fantaxy";
+    string back1;
+    string back2;
+    string ava;
+    if (Model.Avatar != null)
+    {
+        ava = $"data:image/jpeg;base64,{(Convert.ToBase64String(Model.Avatar))}";
+    }
+    else
+    {
+        ava = "/img/icon/Planet.png";
+    }
+    if (Model.Main != null)
+    {
+        back1 = $"url(\"data:image/jpeg;base64,{(Convert.ToBase64String(Model.Main))}\")";
+    }
+    else
+    {
+        back1 = "black";
+    }
+    if (Model.Profile != null)
+    {
+        back2 = $"url(\"data:image/jpeg;base64,{(Convert.ToBase64String(Model.Profile))}\")";
+    }
+    else
+    {
+        back2 = "url(\"/img/background/secondBack.jpg\")";
+    }
+}
+
+<style>
+    body {
+        background: @Html.Raw(back1);
+    }
+
+    .profileDiv {
+        background: @Html.Raw(back2);
+    }
+</style>
+
+<link rel="stylesheet" href="~/css/createPlanet.css" />
+<link rel="stylesheet" href="~/css/profile.css" />
+
+<div class="profileImg second-div">
+    <div class="div-edit">
+        <form id="profileImgForm" method="post" asp-controller="Planet" asp-action="EditProfile" enctype="multipart/form-data">
+            <label class="material-symbols-outlined" data-tooltip="Измененить профильное окно планеты" for="profileImgInput">
+                account_box
+            </label>
+            <input type="file" id="profileImgInput" name="Avatar" style="display: none;" accept="image/png, image/jpeg" />
+        </form>
+
+        <form id="mainProfileImgForm" method="post" asp-controller="Planet" asp-action="EditMain" enctype="multipart/form-data">
+            <label class="material-symbols-outlined" data-tooltip="Изменить задний фон планеты" for="mainProfileImgInput">
+                image
+            </label>
+            <input type="file" id="mainProfileImgInput" name="Avatar" style="display: none;" accept="image/png, image/jpeg" />
+        </form>
+
+        <form id="avaForm" method="post" asp-controller="Planet" asp-action="EditAvatar" enctype="multipart/form-data">
+            <label class="material-symbols-outlined" data-tooltip="Измненить внешний вид планеты" for="avaFile">
+                public
+            </label>
+            <input type="file" id="avaFile" name="Avatar" style="display: none;" accept="image/png, image/jpeg" />
+        </form>
+    </div>
+</div>
+
+
+<div class="container">
+    <div class="row profileDiv">
+        <img class="planetAva" src="@ava" />
+    </div>
+
+    <form method="post" asp-controller="Planet" asp-action="EditPlanet">
+        <div class="row planetInfo">
+            <h3> Название планеты </h3>
+            <input type="text"
+                   name="Name"
+                   placeholder="Название вашей планеты"
+                   class="-input -fillInput -medium" />
+            <h3> Описание </h3>
+            <textarea name="Desc" placeholder="Описание вашей планеты">
+        </textarea>
+            <button type="submit" class="-btn -dark -light -big"> SAVE </button>
+        </div>
+    </form>
+</div>
+
+
+<script>
+    document.getElementById('profileImgInput').addEventListener('change', function () {
+        document.getElementById('profileImgForm').submit();
+    });
+
+
+
+
+    document.getElementById('mainProfileImgInput').addEventListener('change', function () {
+        document.getElementById('mainProfileImgForm').submit();
+    });
+
+
+
+
+    document.getElementById('avaFile').addEventListener('change', function () {
+        document.getElementById('avaForm').submit();
+    });
+</script>

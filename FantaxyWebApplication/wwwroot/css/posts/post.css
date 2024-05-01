@@ -1,9 +1,12 @@
 ﻿.post {
     background-color: #9300d1;
-    border-radius: 30px;
     display: block;
     padding: 10px;
-    margin: 30px;
+    margin-right: auto;
+    margin-left: auto;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    width: calc(var(--index) * 40)
 }
 
     .post .post-author {
@@ -19,7 +22,7 @@
 
     .post img {
         border-radius: 50%;
-        width: calc(var(--index) * 3.5);
+        width: calc(var(--index) * 2.5);
         display: inline;
     }
 
@@ -33,12 +36,22 @@
         background: #a75eff;
         padding: 10px;
         min-height: 100px;
-        height: calc(var(--index) * 20);
+        height: calc(var(--index) * 15);
         width: 100%;
         margin-left: auto;
         margin-right: auto;
         display: block;
         resize: none;
+        color: white;
+    }
+
+    .green {
+        background: green;
+        color: white;
+    }
+
+    .red {
+        background: red;
         color: white;
     }
 
@@ -48,18 +61,11 @@
 
     }
 
-    .post #dislikeBtn {
-        background: #bd0606;
-        color: white;
-    }
-
-    .post #likeBtn {
-        background: #13cd0b;
-    }
-
     .post-likes-dislikes button {
+        color: white;
         border-radius: 50%;
         margin: 3px;
+        cursor: pointer;
         border-color: transparent;
         transition: transform 0.3s;
     }
@@ -75,8 +81,8 @@
     display: block;
     margin-right: auto;
     margin-left: auto;
-    height: calc(var(--index) * 30);
-    width: calc(var(--index) * 30);
+    height: calc(var(--index) * 15);
+    width: calc(var(--index) * 15);
 }
 
 

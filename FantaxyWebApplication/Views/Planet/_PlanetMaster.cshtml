@@ -6,32 +6,18 @@
     var json = HttpContextAccessor.HttpContext.Request.Cookies["UserInfo"];
     int? IdPlanet = HttpContextAccessor.HttpContext.Session.GetInt("PlanetId");
     var json2 = HttpContextAccessor.HttpContext.Request.Cookies[$"Planet_{IdPlanet}"];
-    string? main = "";
-    string? profile = "";
-    string? back1 = "";
-    string? back2 = "";
-    UserModel? userModel = new UserModel();
-    PlanetInfo planetInfo = new PlanetInfo();
-    if (json != null)
-    {
-        userModel = JsonSerializer.Deserialize<UserModel>(json);
+    var json3 = HttpContextAccessor.HttpContext.Request.Cookies[$"Profile_{IdPlanet}"];
 
-    }
-    else
-    {
-        userModel.Avatar = "\\img\\icon\\stdAvatar.png";
-    }
-    if(json2 != null)
-    {
-        planetInfo = JsonSerializer.Deserialize<PlanetInfo>(json2);
-        if (planetInfo != null)
-        {
-            main = planetInfo?.MainBackground.Replace("\\", "/");
-            profile = planetInfo?.ProfileBackground.Replace("\\", "/");
-            back1 = $"url(\"{main}\")";
-            back2 = $"url(\"{profile}\")";
-        }
-    }
+    UserModel? userModel = JsonSerializer.Deserialize<UserModel>(json);
+    UserModel? profilePlanet = JsonSerializer.Deserialize<UserModel>(json3);
+
+    PlanetInfo planetInfo = JsonSerializer.Deserialize<PlanetInfo>(json2);
+
+    string? main = planetInfo?.MainBackground.Replace("\\", "/");
+    string? profile = planetInfo?.ProfileBackground.Replace("\\", "/"); ;
+    string? back1 = $"url(\"{main}\")"; ;
+    string? back2 = $"url(\"{profile}\")";
+
 }
 
 <!DOCTYPE html>
@@ -84,38 +70,13 @@
                 </a>
 
             </div>
-            <img src="/img/icon/Planet.png" />
-            <img src="/img/icon/Planet.png" />
-            <img src="/img/icon/Planet.png" />
-
-            <img src="/img/icon/Planet.png" />
-            <img src="/img/icon/Planet.png" />
-            <img src="/img/icon/Planet.png" />
-
-            <img src="/img/icon/Planet.png" />
-            <img src="/img/icon/Planet.png" />
-            <img src="/img/icon/Planet.png" />
-
-            <img src="/img/icon/Planet.png" />
-            <img src="/img/icon/Planet.png" />
-            <img src="/img/icon/Planet.png" />
-
-            <img src="/img/icon/Planet.png" />
-            <img src="/img/icon/Planet.png" />
-            <img src="/img/icon/Planet.png" />
-
-            <img src="/img/icon/Planet.png" />
-            <img src="/img/icon/Planet.png" />
-            <img src="/img/icon/Planet.png" />
-
-            <img src="/img/icon/Planet.png" />
-            <img src="/img/icon/Planet.png" />
-            <img src="/img/icon/Planet.png" />
-
-            <img src="/img/icon/Planet.png" />
-            <img src="/img/icon/Planet.png" />
-            <img src="/img/icon/Planet.png" />
-
+            <form asp-action="RedirectToPlanetPage" asp-controller="Main">
+                @foreach (var planet in userModel.planetList)
+                {
+                    <img src="@planet.Avatar" class="planetItemList" />
+                    <input type="hidden" value="@planet.IdPlanet" name="IdPlanet" />
+                }
+            </form>
             <p></p>
         </div>
     </div>
@@ -132,8 +93,12 @@
             <div class="div-link">
 
                 <a class="link-profile" asp-controller="Profile" data-tooltip="Профиль" asp-action="PlanetProfile">
+                    <img class="ava" style="border-radius: 50%" src="@profilePlanet.Avatar" />
+                </a>
+
+                <a class="link-profile" asp-controller="Planet" data-tooltip="Редактирование планеты" asp-action="EditPlanet">
                     <span class="material-symbols-outlined">
-                        search
+                        edit
                     </span>
                 </a>
 
@@ -167,6 +132,13 @@
     <script src="~/js/navbar.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" ></script>
     <script src="~/js/planet/paralaxEffect.js" charset="utf-8" ></script>
+    <script>
+        document.querySelectorAll('.planetItemList').forEach(img => {
+            img.addEventListener('click', event => {
+                event.target.parentNode.submit();
+            });
+        });
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

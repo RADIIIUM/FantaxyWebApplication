@@ -24,15 +24,11 @@ namespace FantaxyWebApplication.Models.Entities
         public virtual DbSet<ChatsUsersChatRole> ChatsUsersChatRoles { get; set; } = null!;
         public virtual DbSet<Comment> Comments { get; set; } = null!;
         public virtual DbSet<CommentsFile> CommentsFiles { get; set; } = null!;
-        public virtual DbSet<DisikesComment> DisikesComments { get; set; } = null!;
-        public virtual DbSet<DisikesPlanet> DisikesPlanets { get; set; } = null!;
-        public virtual DbSet<DisikesPost> DisikesPosts { get; set; } = null!;
         public virtual DbSet<GlobalRole> GlobalRoles { get; set; } = null!;
         public virtual DbSet<GlobalRoleUser> GlobalRoleUsers { get; set; } = null!;
         public virtual DbSet<GlobalUsersInfo> GlobalUsersInfos { get; set; } = null!;
-        public virtual DbSet<LikesComment> LikesComments { get; set; } = null!;
-        public virtual DbSet<LikesPlanet> LikesPlanets { get; set; } = null!;
-        public virtual DbSet<LikesPost> LikesPosts { get; set; } = null!;
+        public virtual DbSet<LikeDislikeComment> LikeDislikeComments { get; set; } = null!;
+        public virtual DbSet<LikeDislikePost> LikeDislikePosts { get; set; } = null!;
         public virtual DbSet<Planet> Planets { get; set; } = null!;
         public virtual DbSet<PlanetInfo> PlanetInfos { get; set; } = null!;
         public virtual DbSet<PlanetPlanetRoleUser> PlanetPlanetRoleUsers { get; set; } = null!;
@@ -132,7 +128,7 @@ namespace FantaxyWebApplication.Models.Entities
 
                 entity.ToTable("ChatsInfo");
 
-                entity.Property(e => e.IdChat).ValueGeneratedOnAdd();
+                entity.Property(e => e.IdChat).ValueGeneratedNever();
 
                 entity.Property(e => e.Avatar).HasMaxLength(1000);
 
@@ -206,69 +202,6 @@ namespace FantaxyWebApplication.Models.Entities
                     .HasConstraintName("FK__CommentsF__IdCom__7F2BE32F");
             });
 
-            modelBuilder.Entity<DisikesComment>(entity =>
-            {
-                entity.HasKey(e => e.IdDislikes)
-                    .HasName("PK__Disikes___20191F71A0A78D45");
-
-                entity.ToTable("Disikes_Comments");
-
-                entity.Property(e => e.LoginOwner).HasMaxLength(50);
-
-                entity.HasOne(d => d.IdCommentNavigation)
-                    .WithMany(p => p.DisikesComments)
-                    .HasForeignKey(d => d.IdComment)
-                    .HasConstraintName("FK__Disikes_C__IdCom__44CA3770");
-
-                entity.HasOne(d => d.LoginOwnerNavigation)
-                    .WithMany(p => p.DisikesComments)
-                    .HasForeignKey(d => d.LoginOwner)
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .HasConstraintName("FK__Disikes_C__Login__43D61337");
-            });
-
-            modelBuilder.Entity<DisikesPlanet>(entity =>
-            {
-                entity.HasKey(e => e.IdDislikes)
-                    .HasName("PK__Disikes___20191F718C27F9AE");
-
-                entity.ToTable("Disikes_Planets");
-
-                entity.Property(e => e.LoginOwner).HasMaxLength(50);
-
-                entity.HasOne(d => d.IdPlanetNavigation)
-                    .WithMany(p => p.DisikesPlanets)
-                    .HasForeignKey(d => d.IdPlanet)
-                    .HasConstraintName("FK__Disikes_P__IdPla__40F9A68C");
-
-                entity.HasOne(d => d.LoginOwnerNavigation)
-                    .WithMany(p => p.DisikesPlanets)
-                    .HasForeignKey(d => d.LoginOwner)
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .HasConstraintName("FK__Disikes_P__Login__40058253");
-            });
-
-            modelBuilder.Entity<DisikesPost>(entity =>
-            {
-                entity.HasKey(e => e.IdDislikes)
-                    .HasName("PK__Disikes___20191F71E2CC6EBA");
-
-                entity.ToTable("Disikes_Posts");
-
-                entity.Property(e => e.LoginOwner).HasMaxLength(50);
-
-                entity.HasOne(d => d.IdPostNavigation)
-                    .WithMany(p => p.DisikesPosts)
-                    .HasForeignKey(d => d.IdPost)
-                    .HasConstraintName("FK__Disikes_P__IdPos__489AC854");
-
-                entity.HasOne(d => d.LoginOwnerNavigation)
-                    .WithMany(p => p.DisikesPosts)
-                    .HasForeignKey(d => d.LoginOwner)
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .HasConstraintName("FK__Disikes_P__Login__47A6A41B");
-            });
-
             modelBuilder.Entity<GlobalRole>(entity =>
             {
                 entity.HasKey(e => e.IdRole)
@@ -325,66 +258,52 @@ namespace FantaxyWebApplication.Models.Entities
                     .HasConstraintName("FK__GlobalUse__UserL__3C69FB99");
             });
 
-            modelBuilder.Entity<LikesComment>(entity =>
+            modelBuilder.Entity<LikeDislikeComment>(entity =>
             {
-                entity.HasKey(e => e.IdLikes)
-                    .HasName("PK__Likes_Co__3FDC4886C15FAC00");
+                entity.HasKey(e => e.IdLdc)
+                    .HasName("PK__LikeDisl__0C564DE21DDE71DC");
 
-                entity.ToTable("Likes_Comments");
+                entity.ToTable("LikeDislike_Comments");
 
-                entity.Property(e => e.LoginOwner).HasMaxLength(50);
+                entity.Property(e => e.IdLdc).HasColumnName("IdLDC");
+
+                entity.Property(e => e.UserLogin).HasMaxLength(50);
 
                 entity.HasOne(d => d.IdCommentNavigation)
-                    .WithMany(p => p.LikesComments)
+                    .WithMany(p => p.LikeDislikeComments)
                     .HasForeignKey(d => d.IdComment)
-                    .HasConstraintName("FK__Likes_Com__IdCom__3A4CA8FD");
-
-                entity.HasOne(d => d.LoginOwnerNavigation)
-                    .WithMany(p => p.LikesComments)
-                    .HasForeignKey(d => d.LoginOwner)
                     .OnDelete(DeleteBehavior.Cascade)
-                    .HasConstraintName("FK__Likes_Com__Login__395884C4");
+                    .HasConstraintName("FK__LikeDisli__IdCom__5F7E2DAC");
+
+                entity.HasOne(d => d.UserLoginNavigation)
+                    .WithMany(p => p.LikeDislikeComments)
+                    .HasForeignKey(d => d.UserLogin)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__LikeDisli__UserL__5E8A0973");
             });
 
-            modelBuilder.Entity<LikesPlanet>(entity =>
+            modelBuilder.Entity<LikeDislikePost>(entity =>
             {
-                entity.HasKey(e => e.IdLikes)
-                    .HasName("PK__Likes_Pl__3FDC4886B5DE3F34");
+                entity.HasKey(e => e.IdLdp)
+                    .HasName("PK__LikeDisl__0C564DF792FB1F0A");
 
-                entity.ToTable("Likes_Planets");
+                entity.ToTable("LikeDislike_Posts");
 
-                entity.Property(e => e.LoginOwner).HasMaxLength(50);
+                entity.Property(e => e.IdLdp).HasColumnName("IdLDP");
 
-                entity.HasOne(d => d.IdPlanetNavigation)
-                    .WithMany(p => p.LikesPlanets)
-                    .HasForeignKey(d => d.IdPlanet)
-                    .HasConstraintName("FK__Likes_Pla__IdPla__06CD04F7");
-
-                entity.HasOne(d => d.LoginOwnerNavigation)
-                    .WithMany(p => p.LikesPlanets)
-                    .HasForeignKey(d => d.LoginOwner)
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .HasConstraintName("FK__Likes_Pla__Login__05D8E0BE");
-            });
-
-            modelBuilder.Entity<LikesPost>(entity =>
-            {
-                entity.HasNoKey();
-
-                entity.ToTable("Likes_Posts");
-
-                entity.Property(e => e.LoginOwner).HasMaxLength(50);
+                entity.Property(e => e.UserLogin).HasMaxLength(50);
 
                 entity.HasOne(d => d.IdPostNavigation)
-                    .WithMany()
+                    .WithMany(p => p.LikeDislikePosts)
                     .HasForeignKey(d => d.IdPost)
-                    .HasConstraintName("FK__Likes_Pos__IdPos__3D2915A8");
-
-                entity.HasOne(d => d.LoginOwnerNavigation)
-                    .WithMany()
-                    .HasForeignKey(d => d.LoginOwner)
                     .OnDelete(DeleteBehavior.Cascade)
-                    .HasConstraintName("FK__Likes_Pos__Login__3C34F16F");
+                    .HasConstraintName("FK__LikeDisli__IdPos__5BAD9CC8");
+
+                entity.HasOne(d => d.UserLoginNavigation)
+                    .WithMany(p => p.LikeDislikePosts)
+                    .HasForeignKey(d => d.UserLogin)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__LikeDisli__UserL__5AB9788F");
             });
 
             modelBuilder.Entity<Planet>(entity =>

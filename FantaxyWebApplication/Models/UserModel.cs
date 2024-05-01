@@ -1,4 +1,6 @@
-﻿namespace FantaxyWebApplication.Models
+﻿using FantaxyWebApplication.Models.Entities;
+
+namespace FantaxyWebApplication.Models
 {
     public class UserModel
     {
@@ -14,7 +16,8 @@
         public string Avatar { get; set; }
 
         public string Main { get; set; }
-
         public string Profile { get; set; }
+
+        public IList<PlanetInfo>? planetList { get; set; }
     }
 }

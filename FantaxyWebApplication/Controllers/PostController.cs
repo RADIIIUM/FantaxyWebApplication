@@ -22,25 +22,23 @@ namespace FantaxyWebApplication.Controllers
             _httpContextAccessor = httpContextAccessor;
             _webHostEnvironment = webHostEnvironment;
         }
+
+
         [HttpGet]
         private async Task<IList<PostModel>> GetPostAsync(int IdPlanet)
         {
-            IQueryable<PostModel> posts = from p in _db.Posts
-                                          join u in _db.PlanetUsersInfos on p.OwnerLogin equals u.UserLogin into up
-                                          from u in up.DefaultIfEmpty()
-                                          join files in _db.PostFiles on p.IdPost equals files.IdPost into filesPost
-                                          from files in filesPost.DefaultIfEmpty()
-                                          where p.IdPlanet == IdPlanet
-                                          select new PostModel()
-                                          {
-                                              IdPost = p.IdPost,
-                                              Title = p.PostsInfo.Title,
-                                              Description = p.PostsInfo.PostText,
-                                              Files = filesPost.Select(x => x.PathFile).ToList<string>(),
-                                              authorInfo = u,
-                                              LikeCount = _db.LikesPosts.Count(y => y.IdPost == p.IdPost),
-                                              DislikeCount = _db.DisikesPosts.Count(y => y.IdPost == p.IdPost),
-                                          };
+            var posts = _db.Posts
+               .Where(p => p.IdPlanet == IdPlanet)
+               .Select(p => new PostModel
+               {
+                   IdPost = p.IdPost,
+                   Title = p.PostsInfo.Title,
+                   Description = p.PostsInfo.PostText,
+                   authorInfo = p.OwnerLoginNavigation.PlanetUsersInfos.FirstOrDefault(a => a.IdPlanet == p.IdPlanet),
+                   Files = p.PostFiles.Select(pf => pf.PathFile).ToList(),
+                   LikeCount = p.LikeDislikePosts.Count(ldp => ldp.LikeOrDislike),
+                   DislikeCount = p.LikeDislikePosts.Count(ldp => !ldp.LikeOrDislike)
+               });
 
             IList<PostModel> list = await posts.AsNoTracking().ToListAsync();
             return list;
@@ -101,28 +99,111 @@ namespace FantaxyWebApplication.Controllers
                 {
                     postFile.PathFile = FileServices.CreateFileFromByteArray(_webHostEnvironment, images, Path.Combine("\\img\\FantasyFiles\\Images\\Post\\", $"Post_{userModel.Login}_{post.IdPost}.jpg"));
                 }
+
+                _db.PostFiles.Add(postFile);
             }
             _db.PostsInfos.Add(postInfo);
-            _db.PostFiles.Add(postFile);
 
             await _db.SaveChangesAsync();
             return RedirectToAction("PlanetProfile", "Profile");
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetLikeDislikeStatus(int postId)
+        {
+            int? IdPlanet = HttpContext.Session.Get<int>("PlanetId");
+            var json = HttpContext.Request.Cookies[$"Profile_{IdPlanet}"];
+            UserModel? userModel = JsonSerializer.Deserialize<UserModel>(json);
+            var likeStatus = await _db.LikeDislikePosts.AnyAsync(l => l.IdPost == postId && l.UserLogin == userModel.Login && l.LikeOrDislike == true);
+            var dislikeStatus = await _db.LikeDislikePosts.AnyAsync(d => d.IdPost == postId && d.UserLogin == userModel.Login && d.LikeOrDislike == false);
 
-        //[HttpPost("{postId}")]
-        //public async Task<ActionResult<DisikesPost> PostLikeDislike(int postId, LikeDislike likeDislike)
-        //{
-        //    likeDislike.PostId = postId;
-        //    likeDislike.CreatedAt = DateTime.UtcNow;
-
-        //    _context.LikeDislikes.Add(likeDislike);
-        //    await _context.SaveChangesAsync();
-
-        //    return Ok();
-        //}
-
+            return Ok(new { likeStatus, dislikeStatus });
+        }
 
 
+        [HttpPost]
+        public async Task<IActionResult> LikeOrDislike(int postId, string type)
+        {
+            int? IdPlanet = HttpContext.Session.Get<int>("PlanetId");
+            var json = HttpContext.Request.Cookies[$"Profile_{IdPlanet}"];
+            UserModel? userModel = JsonSerializer.Deserialize<UserModel>(json);
+
+            if (userModel != null)
+            {
+                if (type == "like")
+                {
+                    LikeDislikePost? like = _db.LikeDislikePosts.FirstOrDefault(x => x.IdPost == postId &&
+                    x.UserLogin == userModel.Login);
+
+                    if(like != null && like.LikeOrDislike == true)
+                    {
+                        _db.LikeDislikePosts.Remove(like);
+                        await _db.SaveChangesAsync();
+
+                        return Ok(new
+                        {
+                            likeCount = _db.LikeDislikePosts.Count(l => l.IdPost == postId && l.LikeOrDislike == true),
+                            dislikeCount = _db.LikeDislikePosts.Count(l => l.IdPost == postId && l.LikeOrDislike == false)
+                        });
+                    }
+
+                    like = new LikeDislikePost();
+                    like.IdPost = postId;
+                    like.UserLogin = userModel.Login;
+                    like.LikeOrDislike = true;
+                    LikeDislikePost? likeOrDislike = _db.LikeDislikePosts.FirstOrDefault(x => x.IdPost == postId && x.UserLogin == userModel.Login);
+                    if (likeOrDislike != null)
+                    {
+                        _db.LikeDislikePosts.Remove(likeOrDislike);
+                    }
+
+                    _db.LikeDislikePosts.Add(like);
+                    await _db.SaveChangesAsync();
+
+                    return Ok(new
+                    {
+                        likeCount = _db.LikeDislikePosts.Count(l => l.IdPost == postId && l.LikeOrDislike == true),
+                        dislikeCount = _db.LikeDislikePosts.Count(l => l.IdPost == postId && l.LikeOrDislike == false)
+                    });
+                }
+                else
+                {
+                    LikeDislikePost? dislike = _db.LikeDislikePosts.FirstOrDefault(x => x.IdPost == postId &&
+                    x.UserLogin == userModel.Login);
+
+                    if (dislike != null && dislike.LikeOrDislike == false)
+                    {
+                        _db.LikeDislikePosts.Remove(dislike);
+                        await _db.SaveChangesAsync();
+
+                        return Ok(new
+                        {
+                            likeCount = _db.LikeDislikePosts.Count(l => l.IdPost == postId && l.LikeOrDislike == true),
+                            dislikeCount = _db.LikeDislikePosts.Count(l => l.IdPost == postId && l.LikeOrDislike == false)
+                        });
+                    }
+
+                    dislike = new LikeDislikePost();
+                    dislike.IdPost = postId;
+                    dislike.UserLogin = userModel.Login;
+                    dislike.LikeOrDislike = false;
+                    LikeDislikePost? likeOrDislike = _db.LikeDislikePosts.FirstOrDefault(x => x.IdPost == postId && x.UserLogin == userModel.Login);
+                    if (likeOrDislike != null)
+                    {
+                        _db.LikeDislikePosts.Remove(likeOrDislike);
+                    }
+                    _db.LikeDislikePosts.Add(dislike);
+                    await _db.SaveChangesAsync();
+
+                    return Ok(new
+                    {
+                        dislikeCount = _db.LikeDislikePosts.Count(l => l.IdPost == postId && l.LikeOrDislike == false),
+                        likeCount = _db.LikeDislikePosts.Count(l => l.IdPost == postId && l.LikeOrDislike == true)
+                    });
+                }
+            }
+            return NotFound();
+            
+        } 
     }
 }

@@ -1,4 +1,22 @@
-﻿@model IList<PostModel>
+﻿@using Newtonsoft.Json;
+@model IList<PostModel>
+
+<script>
+    function setButtonColors(post) {
+        let likeButton = document.querySelector(`button[data-post-id="${post.IdPost}"][data-type="like"]`);
+        let dislikeButton = document.querySelector(`button[data-post-id="${post.IdPost}"][data-type="dislike"]`);
+
+        if (post.IsLiked === true) {
+            likeButton.classList.add('green');
+            dislikeButton.classList.remove('red');
+        }
+        if (post.IsLiked === false) {
+            likeButton.classList.remove('green');
+            dislikeButton.classList.add('red');
+        }
+    }
+</script>
+
 
 @foreach (var post in Model)
 {
@@ -12,26 +30,29 @@
         <textarea readonly> @post.Description </textarea>
 
         <div class="post-likes-dislikes">
-            <button id="likeBtn">
+
+            <button class="btn" id="green" data-type="like" data-post-id="@post.IdPost">
                 <span class="material-symbols-outlined">
                     thumb_up
                 </span>
             </button>
-            <span style="color: white;
-                         font-family:'Sansation Light' ">
-                <span style="color: white;
-            font-family:'Sansation Light'">
-                    @post.LikeCount
-                </span>
-                     </span>
 
+            <span class="likeCount material-symbols-outlined" data-post-id="@post.IdPost">
+                @post.LikeCount
+            </span>
 
-            <button id="dislikeBtn">
-                <span style="color: white;
-            font-family:'Sansation Light'">
-                    @post.DislikeCount
+            <button class="btn" id="red" data-type="dislike" data-post-id="@post.IdPost">
+                <span class="material-symbols-outlined">
+                    thumb_down
                 </span>
             </button>
+
+            <span class="dislikeCount material-symbols-outlined" data-post-id="@post.IdPost">
+                @post.DislikeCount
+            </span>
+            <script>
+                setButtonColors(@Html.Raw(JsonConvert.SerializeObject(post)));
+            </script>
         </div>
 
         <div class="post-images">
@@ -46,4 +67,6 @@
 
     </div>
 }
+
+<script src="~/js/post/likeOrdislike.js"></script>
 

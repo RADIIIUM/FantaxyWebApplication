@@ -7,7 +7,7 @@ namespace FantaxyWebApplication.Models.Entities
     {
         public Post()
         {
-            DisikesPosts = new HashSet<DisikesPost>();
+            LikeDislikePosts = new HashSet<LikeDislikePost>();
             PostFiles = new HashSet<PostFile>();
         }
 
@@ -19,7 +19,7 @@ namespace FantaxyWebApplication.Models.Entities
         public virtual Planet? IdPlanetNavigation { get; set; }
         public virtual User? OwnerLoginNavigation { get; set; }
         public virtual PostsInfo? PostsInfo { get; set; }
-        public virtual ICollection<DisikesPost> DisikesPosts { get; set; }
+        public virtual ICollection<LikeDislikePost> LikeDislikePosts { get; set; }
         public virtual ICollection<PostFile> PostFiles { get; set; }
     }
 }

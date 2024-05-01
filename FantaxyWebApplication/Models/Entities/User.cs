@@ -11,12 +11,9 @@ namespace FantaxyWebApplication.Models.Entities
             Chats = new HashSet<Chat>();
             ChatsUsersChatRoles = new HashSet<ChatsUsersChatRole>();
             Comments = new HashSet<Comment>();
-            DisikesComments = new HashSet<DisikesComment>();
-            DisikesPlanets = new HashSet<DisikesPlanet>();
-            DisikesPosts = new HashSet<DisikesPost>();
             GlobalRoleUsers = new HashSet<GlobalRoleUser>();
-            LikesComments = new HashSet<LikesComment>();
-            LikesPlanets = new HashSet<LikesPlanet>();
+            LikeDislikeComments = new HashSet<LikeDislikeComment>();
+            LikeDislikePosts = new HashSet<LikeDislikePost>();
             PlanetCuratorLoginNavigations = new HashSet<Planet>();
             PlanetOwnerLoginNavigations = new HashSet<Planet>();
             PlanetPlanetRoleUsers = new HashSet<PlanetPlanetRoleUser>();
@@ -34,12 +31,9 @@ namespace FantaxyWebApplication.Models.Entities
         public virtual ICollection<Chat> Chats { get; set; }
         public virtual ICollection<ChatsUsersChatRole> ChatsUsersChatRoles { get; set; }
         public virtual ICollection<Comment> Comments { get; set; }
-        public virtual ICollection<DisikesComment> DisikesComments { get; set; }
-        public virtual ICollection<DisikesPlanet> DisikesPlanets { get; set; }
-        public virtual ICollection<DisikesPost> DisikesPosts { get; set; }
         public virtual ICollection<GlobalRoleUser> GlobalRoleUsers { get; set; }
-        public virtual ICollection<LikesComment> LikesComments { get; set; }
-        public virtual ICollection<LikesPlanet> LikesPlanets { get; set; }
+        public virtual ICollection<LikeDislikeComment> LikeDislikeComments { get; set; }
+        public virtual ICollection<LikeDislikePost> LikeDislikePosts { get; set; }
         public virtual ICollection<Planet> PlanetCuratorLoginNavigations { get; set; }
         public virtual ICollection<Planet> PlanetOwnerLoginNavigations { get; set; }
         public virtual ICollection<PlanetPlanetRoleUser> PlanetPlanetRoleUsers { get; set; }
