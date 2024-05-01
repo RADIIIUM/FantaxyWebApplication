@@ -93,7 +93,7 @@
             <div class="div-link">
 
                 <a class="link-profile" asp-controller="Profile" data-tooltip="Профиль" asp-action="PlanetProfile">
-                    <img class="ava" style="border-radius: 50%" src="@profilePlanet.Avatar" />
+                    <img class="ava" style="height: calc(var(--index) * 3); width: calc(var(--index) * 3); border-radius: 50%" src="@profilePlanet.Avatar" />
                 </a>
 
                 <a class="link-profile" asp-controller="Planet" data-tooltip="Редактирование планеты" asp-action="EditPlanet">
@@ -132,7 +132,7 @@
     <script src="~/js/navbar.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" ></script>
     <script src="~/js/planet/paralaxEffect.js" charset="utf-8" ></script>
-    <script>
+        <script>
         document.querySelectorAll('.planetItemList').forEach(img => {
             img.addEventListener('click', event => {
                 event.target.parentNode.submit();
