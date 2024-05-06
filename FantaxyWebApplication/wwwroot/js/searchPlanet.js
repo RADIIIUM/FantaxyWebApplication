@@ -1,4 +1,21 @@
 $(document).ready(function () {
+
+    try {
+        checkModeratorAccess().then(function (hasAccess) {
+            if (hasAccess) {
+                console.log("Loading buttons")
+                $('.frostPlanet').css('display', 'inline');
+            } else {
+                $('.frostPlanet').css('display', 'none');
+            }
+        }).catch(function (error) {
+            console.error('Error checking moderator access: ' + error);
+        });
+    } catch (error) {
+        console.error('Error checking moderator access: ' + error);
+    }
+
+
     // Get the search input element
     // Set up click handlers for the links
     // (no need to set up click handlers if we're not using links)

@@ -32,9 +32,9 @@ namespace FantaxyWebApplication.Controllers
             EditModel edit = HttpContext.Session.Get<EditModel>("EditProfile");
             if (edit != null)
             {
-                if(edit.Avatar != null) userModel.Avatar = FileServices.CreateFileFromByteArray(_appEnvironment, edit.Avatar, Path.Combine("\\img\\FantasyFiles\\Profiles\\Style\\Globals\\Avatar", $"{userModel.Login}.jpg"));
-                if(edit.Main != null) userModel.Main = FileServices.CreateFileFromByteArray(_appEnvironment, edit.Main, Path.Combine("\\img\\FantasyFiles\\Profiles\\Style\\Globals\\Main", $"{userModel.Login}.jpg"));
-                if(edit.Profile != null)  userModel.Profile = FileServices.CreateFileFromByteArray(_appEnvironment, edit.Profile, Path.Combine("\\img\\FantasyFiles\\Profiles\\Style\\Globals\\Profile", $"{userModel.Login}.jpg"));
+                if (edit.Avatar != null) userModel.Avatar = FileServices.CreateFileFromByteArray(_appEnvironment, edit.Avatar, Path.Combine("\\img\\FantasyFiles\\Profiles\\Style\\Globals\\Avatar", $"{userModel.Login}.jpg"));
+                if (edit.Main != null) userModel.Main = FileServices.CreateFileFromByteArray(_appEnvironment, edit.Main, Path.Combine("\\img\\FantasyFiles\\Profiles\\Style\\Globals\\Main", $"{userModel.Login}.jpg"));
+                if (edit.Profile != null) userModel.Profile = FileServices.CreateFileFromByteArray(_appEnvironment, edit.Profile, Path.Combine("\\img\\FantasyFiles\\Profiles\\Style\\Globals\\Profile", $"{userModel.Login}.jpg"));
             }
 
             using (FantaxyContext db = new FantaxyContext())
@@ -95,7 +95,7 @@ namespace FantaxyWebApplication.Controllers
             return RedirectToAction("PlanetProfile", "Profile");
         }
 
-        public async Task<IActionResult> EditProfile ()
+        public async Task<IActionResult> EditProfile()
         {
             EditModel? result = HttpContext.Session.Get<EditModel>("EditProfile");
             if (result != null)
@@ -131,7 +131,7 @@ namespace FantaxyWebApplication.Controllers
         {
             EditModel? model = HttpContext.Session.Get<EditModel>("EditProfile");
             if (tag == "_A") model.Avatar = ImageUpload.UploadProfileImage(_contextAccessor, Avatar, "EditProfile", model, tag);
-            if(tag == "_M") model.Main = ImageUpload.UploadProfileImage(_contextAccessor, Avatar, "EditProfile", model, tag);
+            if (tag == "_M") model.Main = ImageUpload.UploadProfileImage(_contextAccessor, Avatar, "EditProfile", model, tag);
             if (tag == "_P") model.Profile = ImageUpload.UploadProfileImage(_contextAccessor, Avatar, "EditProfile", model, tag);
             return View("EditProfilePlanet", model);
         }
@@ -146,18 +146,43 @@ namespace FantaxyWebApplication.Controllers
             return View("EditProfile", model);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> OtherMainProfile(string Login)
+        {
+            GlobalUsersInfo glu = await _db.GlobalUsersInfos.FirstOrDefaultAsync(x => x.UserLogin == Login);
+            UserModel us = new UserModel();
+            if (glu != null)
+            {
+                us.Name = glu.UserName;
+                us.Avatar = glu.Avatar;
+                us.Main = glu.MainBackground;
+                us.Profile = glu.ProfileBackground;
+                us.Description = glu.UserDescription;
+                us.Login = glu.UserLogin;
+                us.Email = glu.UserEmail;
+                us.Telephone = glu.UserTelephone;
+                us.Role = await GetMainRole(glu);
+
+                return View(us);
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
         public async Task<IActionResult> MainProfile()
         {
             HttpContext.Session.Remove("EditProfile");
             var json = HttpContext.Request.Cookies["UserInfo"];
             UserModel? userModel = JsonSerializer.Deserialize<UserModel>(json);
 
-                if(userModel != null)
-                {
-                    return View(userModel);
-                }
+            if (userModel != null)
+            {
+                return View(userModel);
+            }
 
-            
+
             return Redirect("/Main/Users");
         }
 
@@ -232,6 +257,30 @@ namespace FantaxyWebApplication.Controllers
             }
 
             var roleName = _db.PlanetRoles.FirstOrDefault(x => x.IdRole == roleId)?.RoleName;
+            if (roleName == null)
+            {
+                return "";
+            }
+
+            return roleName;
+        }
+
+        [HttpGet]
+        public async Task<string> GetMainRole(GlobalUsersInfo userModel)
+        {
+
+            if (userModel == null)
+            {
+                return "";
+            }
+
+            var roleId = _db.GlobalRoleUsers.FirstOrDefault(x => x.UserLogin == userModel.UserLogin)?.IdRole;
+            if (roleId == null)
+            {
+                return "";
+            }
+
+            var roleName = _db.GlobalRoles.FirstOrDefault(x => x.IdRole == roleId)?.RoleName;
             if (roleName == null)
             {
                 return "";

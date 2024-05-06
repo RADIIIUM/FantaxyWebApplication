@@ -70,7 +70,6 @@ namespace FantaxyWebApplication.Controllers
         {
             var usInfo = HttpContext.Request.Cookies["UserInfo"];
             UserModel? user = JsonSerializer.Deserialize<UserModel>(usInfo);
-            IdPlanet = await GetIdPlanet(IdPlanet);
             HttpContext.Session.Set("PlanetId", IdPlanet);
             PlanetInfo? plInfo = await _db.PlanetInfos.FirstOrDefaultAsync(x => x.IdPlanet == IdPlanet);
             if (plInfo != null)
@@ -124,21 +123,6 @@ namespace FantaxyWebApplication.Controllers
             return PartialView(await GetUserAsync(search));
         }
 
-        public async Task<int?> GetIdPlanet(int? IdPlanet)
-        {
-            int? id = HttpContext.Session.GetInt("PlanetId");
-            if (id == -1)
-            {
-                HttpContext.Session.Set("PlanetId", IdPlanet);
-                id = IdPlanet;
-                return id;
-            }
-            else
-            {
-                return id;
-            }
-        }
-
         [HttpGet]
         public async Task<string> GetRole(PlanetUsersInfo userModel, int? IdPlanet)
         {
@@ -187,17 +171,17 @@ namespace FantaxyWebApplication.Controllers
 
         private async Task<IList<SearchModel>> GetUserAsync(string search)
         {
-            IQueryable<SearchModel> usersIQ = from p in _db.GlobalUsersInfos
-                                                join s in _db.GlobalRoleUsers on p.UserLogin equals s.UserLogin into ps
-                                                from s in ps.DefaultIfEmpty()
-                                                select new SearchModel
-                                                {
-                                                    Id = p.UserLogin,
-                                                    Name = p.UserName,
-                                                    RoleOrStatus = s.IdRole ?? 4,
-                                                    Avatar = p.Avatar,
-                                                    Profile = p.ProfileBackground
-                                                };
+            var usersIQ = _db.GlobalUsersInfos.Join(_db.GlobalRoleUsers, x => x.UserLogin,
+                y => y.UserLogin, (x,y) => new SearchModel
+                {
+                    Id = x.UserLogin,
+                    Name = x.UserName,
+                    RoleOrStatus = y.IdRole ?? 4,
+                    Avatar = x.Avatar,
+                    Profile = x.ProfileBackground
+                });
+            usersIQ = usersIQ.Where(s => s.RoleOrStatus != 5);
+
             if (!String.IsNullOrEmpty(search))
             {
                 usersIQ = usersIQ.Where(s => s.Name.ToUpper().Contains(search.ToUpper()));

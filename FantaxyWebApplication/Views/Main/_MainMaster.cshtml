@@ -45,11 +45,18 @@
 
             </div>
             <form asp-action="RedirectToPlanetPage" asp-controller="Main">
-                @foreach (var planet in userModel.planetList)
+                @if (userModel.planetList != null)
                 {
-                    <img src="@planet.Avatar" class="planetItemList" />
-                    <input type="hidden" value="@planet.IdPlanet" name="IdPlanet"/>
+                    foreach (var planet in userModel.planetList)
+                    {
+                        if(planet != null)
+                        {
+                            <img src="@planet?.Avatar" class="planetItemList" />
+                            <input type="hidden" value="@planet?.IdPlanet" name="IdPlanet" />
+                        }
+                    }
                 }
+
             </form>
             <p></p>
         </div>

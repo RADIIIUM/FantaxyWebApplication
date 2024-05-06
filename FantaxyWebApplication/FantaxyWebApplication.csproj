@@ -7,10 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\js\planet\planet.js" />
     <Content Remove="wwwroot\js\postGenerate.js" />
   </ItemGroup>
 
   <ItemGroup>
+    <_ContentIncludedByDefault Remove="wwwroot\js\planet\planet.js" />
     <_ContentIncludedByDefault Remove="wwwroot\js\postGenerate.js" />
   </ItemGroup>
 
@@ -46,6 +48,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="wwwroot\js\planet\planet.js" />
     <None Include="wwwroot\js\post\postGenerate.js" />
   </ItemGroup>
 

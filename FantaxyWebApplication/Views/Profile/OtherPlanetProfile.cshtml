@@ -1,0 +1,67 @@
+﻿@model UserModel
+@{
+    Layout = "~/Views/Main/_MainMaster.cshtml";
+
+    ViewData["Title"] = "Fantaxy";
+
+    string? main = Model?.Main.Replace("\\", "/");
+    string? profile = Model?.Profile.Replace("\\", "/");
+    string? back1 = $"url(\"{main}\")";
+    string? back2 = $"url(\"{profile}\")";
+}
+
+<link rel="stylesheet" href="~/css/profile.css" />
+
+<style>
+    body {
+        display: flex;
+        flex-direction: column;
+        background: @Html.Raw(back1);
+        background-attachment: inherit;
+        background-repeat: no-repeat;
+        background-size: cover
+    }
+
+    .profileImg {
+        background: @Html.Raw(back2);
+        background-attachment: inherit;
+        background-repeat: no-repeat;
+        background-size: cover
+    }
+</style>
+
+<div class="profileImg second-div">
+    <div class="div-edit">
+        <a asp-controller="Main" title="Вернуться назад" asp-action="Users">
+            <span class="material-symbols-outlined">
+                reply
+            </span>
+        </a>
+
+    </div>
+    <div class="img">
+        <img id="ava" class="ava" src="@Model.Avatar" />
+    </div>
+
+    <h1> @Model.Name </h1>
+    <div class="divrole">
+        <h2 id="h2Role"> @Model.Role  </h2>
+    </div>
+</div>
+<div class="maincontent">
+    <h1 style="text-align: center"> Описание </h1>
+    <textarea class="desc" readonly maxlength="2000">@Model.Description</textarea>
+
+    <form asp-controller="Home"
+          asp-action="Logout">
+        <input type="submit"
+               class="btn -dark -big" value="Log Out" />
+    </form>
+
+    <form asp-controller="Home"
+          asp-action="Logout">
+        <input type="submit"
+               class="btn -dark -big" value="Log Out" />
+    </form>
+
+</div>

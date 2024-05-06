@@ -10,29 +10,9 @@
         background-position: center;">
             <img src="@user.Avatar" alt="@user.Name" />
             <input type="text" class="h4" readonly maxlenght="15" value="@Html.Raw(user.Name)" />
-            <span class="roleStatus"> @GetRoleStatus(user.RoleOrStatus) </span>
+            <span class="roleStatus"> Заблокированный </span>
             <input type="hidden" name="Login" value="@Html.Raw(user.Id)" />
         </article>
     </form>
-}
-
-
-@functions {
-    string GetRoleStatus(int role)
-    {
-        switch (role)
-        {
-            case 1:
-                return "Гл. Администратор";
-            case 2:
-                return "Администратор";
-            case 3:
-                return "Модератор";
-            case 4:
-                return "Пользователь";
-            default:
-                return "Пользователь";
-        }
-    }
 }
 

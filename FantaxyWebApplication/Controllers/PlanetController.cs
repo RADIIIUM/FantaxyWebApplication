@@ -202,40 +202,6 @@ namespace FantaxyWebApplication.Controllers
             return View(edit);
         }
 
-        public async Task<PlanetUsersInfo?> CreateProfile(int? IdPlanet, string Login)
-        {
-            if (IdPlanet == null)
-            {
-                return null;
-            }
-           
-            GlobalUsersInfo? user = await _db.GlobalUsersInfos.FirstOrDefaultAsync(x => x.UserLogin == Login);
-
-            PlanetUsersInfo pui = new PlanetUsersInfo();
-            pui.UserLogin = user.UserLogin;
-            pui.UserName = user.UserName;
-            pui.UserDescription = user.UserDescription ?? "Hello world!";
-            pui.Avatar = user.Avatar;
-            pui.ProfileBackground = user.ProfileBackground;
-            pui.MainBackground = user.MainBackground;
-            pui.IdPlanet = IdPlanet;
-
-            PlanetPlanetRoleUser pl = new PlanetPlanetRoleUser();
-            pl.IdPlanet = IdPlanet;
-            pl.UserLogin = user.UserLogin;
-            pl.IdRole = 4;
-
-            PlanetUser pu = new PlanetUser();
-            pu.UserLogin = user.UserLogin;
-            pu.IdPlanet = IdPlanet;
-
-            _db.PlanetUsersInfos.Add(pui);
-            _db.PlanetPlanetRoleUsers.Add(pl);
-            _db.PlanetUsers.Add(pu);
-            await _db.SaveChangesAsync();
-            return pui;
-        }
-
         public async Task<User?> SearchCurator(string userLogin)
         {
             var moderators = from user in _db.Users
@@ -263,21 +229,20 @@ namespace FantaxyWebApplication.Controllers
             return curator;
         }
 
+        [HttpPost]
         public async Task<IActionResult> RegPlanet(string Name, string Desc)
         {
             var json = HttpContext.Request.Cookies["UserInfo"];
             UserModel? userModel = JsonSerializer.Deserialize<UserModel>(json);
-            User user = await _db.Users.FirstOrDefaultAsync(x => x.UserLogin == userModel.Login);
-
             Planet planet = new Planet();
-            planet.OwnerLoginNavigation = user;
+            planet.OwnerLogin = userModel.Login;
             planet.CuratorLoginNavigation = await SearchCurator(userModel.Login);
 
             _db.Planets.Add(planet);
             await _db.SaveChangesAsync();
 
             PlanetUser pu = new PlanetUser();
-            pu.UserLoginNavigation = user;
+            pu.UserLogin = userModel.Login;
             pu.IdPlanetNavigation = planet;
 
             PlanetInfo planetInfo = new PlanetInfo();
@@ -285,56 +250,65 @@ namespace FantaxyWebApplication.Controllers
             planetInfo.PlanetName = Name ?? "Новая планета";
             planetInfo.PlanetDescription = Desc ?? "Новая планета на просторах Fantaxy!";
 
+            int lastId = _db.Planets.OrderByDescending(p => p.IdPlanet).FirstOrDefault()?.IdPlanet ?? 0;
+            int newId = lastId + 1;
+
             CreatePlanetModel? create = HttpContext.Session.Get<CreatePlanetModel>("CreatePlanet");
-                if (create?.Avatar != null) planetInfo.Avatar = FileServices.CreateFileFromByteArray(_appEnvironment, create.Avatar, Path.Combine("\\img\\FantasyFiles\\Profiles\\Style\\Planets\\Avatar", $"{planet.IdPlanet}.jpg"));
-                else planetInfo.Avatar = "\\img\\icon\\Planet.png";
-                
-                if (create?.Main != null) planetInfo.MainBackground = FileServices.CreateFileFromByteArray(_appEnvironment,create.Main, Path.Combine("\\img\\FantasyFiles\\Profiles\\Style\\Planets\\Main", $"{planet.IdPlanet}.jpg"));
-                else planetInfo.MainBackground = "\\img\\background\\MainBackground.jpg";
-                
-                if (create?.Profile != null) planetInfo.ProfileBackground = FileServices.CreateFileFromByteArray(_appEnvironment,create.Profile, Path.Combine("\\img\\FantasyFiles\\Profiles\\Style\\Planets\\Profile", $"{planet.IdPlanet}.jpg"));
-                else planetInfo.MainBackground = "\\img\\background\\secondBack.jpg";
+            if (create?.Avatar != null) planetInfo.Avatar = FileServices.CreateFileFromByteArray(_appEnvironment, create.Avatar, Path.Combine("\\img\\FantasyFiles\\Profiles\\Style\\Planets\\Avatar", $"{planet.IdPlanet}.jpg"));
+            else planetInfo.Avatar = "\\img\\icon\\Planet.png";
+
+            if (create?.Main != null) planetInfo.MainBackground = FileServices.CreateFileFromByteArray(_appEnvironment, create.Main, Path.Combine("\\img\\FantasyFiles\\Profiles\\Style\\Planets\\Main", $"{planet.IdPlanet}.jpg"));
+            else planetInfo.MainBackground = "\\img\\background\\MainBackground.jpg";
+
+            if (create?.Profile != null) planetInfo.ProfileBackground = FileServices.CreateFileFromByteArray(_appEnvironment, create.Profile, Path.Combine("\\img\\FantasyFiles\\Profiles\\Style\\Planets\\Profile", $"{planet.IdPlanet}.jpg"));
+            else planetInfo.ProfileBackground = "\\img\\background\\secondBack.jpg";
             PlanetUsersInfo pui = new PlanetUsersInfo();
-            pui.UserLoginNavigation = user;
+            pui.UserLogin = userModel.Login;
             pui.UserName = userModel.Name;
             pui.UserDescription = userModel.Description ?? "Hello world!";
             pui.Avatar = userModel.Avatar;
             pui.ProfileBackground = userModel.Profile;
             pui.MainBackground = userModel.Main;
-            pui.IdPlanet = planet.IdPlanet;
+            pui.IdPlanet = newId;
 
             StatusesPlanet sp = new StatusesPlanet();
-            sp.IdPlanet = planet.IdPlanet;
+            sp.IdPlanet = newId;
             sp.IdPlanetNavigation = planet;
             sp.IdStatus = 1;
 
-            PlanetPlanetRoleUser ppru = new PlanetPlanetRoleUser();
-            ppru.IdPlanetNavigation = planet;
-            ppru.UserLoginNavigation = user;
-            ppru.IdRole = 1;
+            PlanetPlanetRoleUser planetPlanetRoleUser = new PlanetPlanetRoleUser();
+            planetPlanetRoleUser.IdPlanetNavigation = planet;
+            planetPlanetRoleUser.UserLogin = userModel.Login;
+            planetPlanetRoleUser.IdRole = 1;
 
             /* Для куратора */
-
-            PlanetUsersInfo? curatorProfile = await CreateProfile(planet.IdPlanet, planet.CuratorLogin);
+            GlobalUsersInfo? curator = await _db.GlobalUsersInfos.FirstOrDefaultAsync(x => x.UserLogin == planet.CuratorLogin);
+            PlanetUsersInfo? curatorProfile = new PlanetUsersInfo();
+            pui.UserLogin = curator.UserLogin;
+            pui.UserName = curator.UserName;
+            pui.UserDescription = curator.UserDescription ?? "Hello world!";
+            pui.Avatar = curator.Avatar;
+            pui.ProfileBackground = curator.ProfileBackground;
+            pui.MainBackground = curator.MainBackground;
+            pui.IdPlanet = planet.IdPlanet;
 
             PlanetPlanetRoleUser curatorRole = new PlanetPlanetRoleUser();
-            ppru.IdPlanetNavigation = planet;
-            ppru.UserLogin = curatorProfile.UserLogin;
-            ppru.IdRole = 6; // Куратор
+            curatorRole.IdPlanetNavigation = planet;
+            curatorRole.UserLogin = curatorProfile.UserLogin;
+            curatorRole.IdRole = 6; // Куратор
+
 
             _db.PlanetUsers.Add(pu);
             _db.PlanetUsersInfos.Add(pui);
-            _db.PlanetUsersInfos.Add(curatorProfile);
-
             _db.StatusesPlanets.Add(sp);
             _db.PlanetInfos.Add(planetInfo);
-            _db.PlanetPlanetRoleUsers.Add(ppru);
+            _db.PlanetUsersInfos.Add(curatorProfile);
+            _db.PlanetPlanetRoleUsers.Add(planetPlanetRoleUser);
             _db.PlanetPlanetRoleUsers.Add(curatorRole);
 
             await _db.SaveChangesAsync();
 
             return Redirect("/Main/Planets");
-
         }
 
         [HttpPost]

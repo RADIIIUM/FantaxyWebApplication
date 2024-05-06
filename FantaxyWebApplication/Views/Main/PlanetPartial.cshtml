@@ -1,42 +1,40 @@
 ﻿@model IList<SearchModel>
 
-<form id="PlanetForm" asp-controller="Main" asp-action="RedirectToPlanetPage">
-    @foreach (var planet in Model)
-    {
-        string back = planet.Profile.Replace("\\", "/");
-        <div class="Item" id="@Html.Raw(planet.Id)" style="background: @($"url(\"{back}\")");
+@foreach (var planet in Model)
+{
+    string back = planet.Profile.Replace("\\", "/");
+    <form method="post" asp-controller="Main" asp-action="RedirectToPlanetPage" asp-route-IdPlanet="@planet.Id">
+        <article class="Item" onclick="this.parentNode.submit()" style="background: @($"url(\"{back}\")");
         background-size: cover;
         background-position: center;">
-            <img src="@planet.Avatar" />
+            <img src="@planet.Avatar" alt="@planet.Name" />
             <input type="text" class="h4" readonly maxlenght="15" value="@Html.Raw(planet.Name)" />
-            @{
-                switch(planet.RoleOrStatus)
+                <div class="planetButtons">
+
+                @switch (planet.RoleOrStatus)
                 {
                     case 1: // Публичный
-                        <span class="roleStatus"> Публичный </span>
-                        <span class="material-symbols-outlined" style="background: green">
-                            groups
-                        </span>
-                        break;
+                            <span class="roleStatus"> Публичный </span>
+                            <span class="material-symbols-outlined" style="background: green">
+                                groups
+                            </span>
+                     break;
                     case 2: // Частный
                         <span class="roleStatus"> Частный </span>
                         <span class="material-symbols-outlined" style="background: red">
                             lock
                         </span>
                         break;
+                    default:
+                        <span class="roleStatus"> Публичный </span>
+                        <span class="material-symbols-outlined" style="background: green">
+                            groups
+                            </span>
+                    break;
                 }
-            }
-            <input type="hidden" name="IdPlanet" value="@Html.Raw(@planet.Id)" />
-        </div>
-    }
-</form>
 
-<script>
-    $(document).ready(function () {
-        $("div.Item").click(function () {
-            $("#PlanetForm").submit();
-        });
-    });
-</script>
-
-@*             <input type="hidden" name="PlanetStatus" value="@Html.Raw(@planet.RoleOrStatus)" /> *@
+                </div>
+            <input type="hidden" name="IdPlanet" value="@Html.Raw(planet.Id)" />
+        </article>
+    </form>
+}

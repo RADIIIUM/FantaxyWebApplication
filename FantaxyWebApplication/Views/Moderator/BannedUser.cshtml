@@ -1,13 +1,13 @@
 ﻿@{
-    Layout = "_MainMaster.cshtml";
+    Layout = "~/Views/Main/_MainMaster.cshtml";
 }
 <meta charset="utf-8">
 <link rel="stylesheet" href="~/css/main.css" asp-append-version="true" />
 <link rel="stylesheet" href="~/css/items.css" asp-append-version="true" />
 
 <div class="div-link">
-    <a asp-controller="Moderator" asp-action="BannedUser">
-        <span class="material-symbols-outlined" data-tooltip="Список заблокированных пользователей">
+    <a asp-controller="Main" asp-action="Users">
+        <span class="material-symbols-outlined" data-tooltip="Вернуться к пользователям">
             group
         </span>
     </a>
@@ -19,10 +19,6 @@
             <input name="search" id="search" type="text" class="-input -fillInput -small" placeholder="Тут кто-нибудь есть?" />
             <input type="submit" id="searchInput" value="search" class="-btn -small -dark" />
         </div>
-        <div class="searchlinkDiv">
-            <a> <span> Users </span></a>
-            <a asp-action="Planets" asp-controller="Main"> <span> Planets </span></a>
-        </div>
     </div>
 </form>
 
@@ -32,4 +28,4 @@
 
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script type="module" src="~/js/searchUser.js" charset="utf-8"></script>
+<script type="module" src="~/js/moderator/searchBannedUser.js" charset="utf-8"></script>
