@@ -204,11 +204,12 @@ namespace FantaxyWebApplication.Controllers
                                       where p.UserLogin == user.UserLogin
                                       join pln in _db.PlanetInfos on p.IdPlanet equals pln.IdPlanet into planet
                                       from pln in planet.DefaultIfEmpty()
+                                      join s in _db.StatusesPlanets on p.IdPlanet equals s.IdPlanet into ps
+                                      from s in ps.DefaultIfEmpty()
+                                      where s.IdStatus != 3
                                       select pln).ToList();
                     us.planetList = planetList;
 
-
-                    // аутентификация
 
                     var json = JsonSerializer.Serialize<UserModel>(us);
                     HttpContext.Response.Cookies.Append("UserInfo", json);

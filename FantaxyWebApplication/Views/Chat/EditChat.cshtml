@@ -1,0 +1,100 @@
+﻿@model ChatCreate
+@{
+    Layout = "~/Views/Main/_MainMaster.cshtml";
+
+    ViewData["Title"] = "Fantaxy";
+    string back1;
+    string back2;
+    if (Model.MainBackground != null)
+    {
+        back1 = $"url(\"data:image/jpeg;base64,{(Convert.ToBase64String(Model.MainBackground))}\")";
+    }
+    else
+    {
+        back1 = "url(\"/img/background/secondBack.jpg\")"; ;
+    }
+    if (Model.ProfileBack != null)
+    {
+        back2 = $"url(\"data:image/jpeg;base64,{(Convert.ToBase64String(Model.ProfileBack))}\")";
+    }
+    else
+    {
+        back2 = "url(\"/img/background/secondBack.jpg\")";
+    }
+}
+
+<style>
+    body {
+        background: @Html.Raw(back1);
+    }
+
+    .chat {
+        background: @Html.Raw(back2);
+    }
+</style>
+
+<link rel="stylesheet" href="~/css/createPlanet.css" />
+<link rel="stylesheet" href="~/css/profile.css" />
+<link rel="stylesheet" href="~/css/chats/chat.css" />
+
+<div class="profileImg second-div">
+    <div class="div-edit">
+        <form id="profileImgForm" method="post" asp-controller="Chat" asp-action="EditProfile" enctype="multipart/form-data">
+            <label class="material-symbols-outlined" data-tooltip="Измененить профильное окно чата" for="profileImgInput">
+                account_box
+            </label>
+            <input type="file" id="profileImgInput" name="Avatar" style="display: none;" accept="image/png, image/jpeg" />
+        </form>
+
+        <form id="mainProfileImgForm" method="post" asp-controller="Chat" asp-action="EditMain" enctype="multipart/form-data">
+            <label class="material-symbols-outlined" data-tooltip="Изменить задний фон чата" for="mainProfileImgInput">
+                image
+            </label>
+            <input type="file" id="mainProfileImgInput" name="Avatar" style="display: none;" accept="image/png, image/jpeg" />
+        </form>
+    </div>
+</div>
+
+<form method="post" asp-controller="Chat" asp-action="EditExistChat">
+
+    <div class="container">
+        <div class="chatList" style="margin-bottom: 30px">
+            <div class="chat">
+                <div class="chat-info">
+                    <h1> @Model.Name </h1>
+                    <p style="color: white">
+                        Кол-во участников:
+                        <span> 999999 </span>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row planetInfo">
+            <h3> Название чата </h3>
+            <input type="text"
+                   name="Name"
+                   placeholder="Название чата"
+                   class="-input -fillInput -medium" />
+            <h3> Описание </h3>
+            <textarea name="Desc" placeholder="Описание вашего чата">
+            </textarea>
+            <button type="submit" class="-btn -dark -light -big"> SAVE </button>
+        </div>
+
+    </div>
+</form>
+
+
+<script>
+    document.getElementById('profileImgInput').addEventListener('change', function () {
+        document.getElementById('profileImgForm').submit();
+    });
+
+
+
+
+    document.getElementById('mainProfileImgInput').addEventListener('change', function () {
+        document.getElementById('mainProfileImgForm').submit();
+    });
+</script>

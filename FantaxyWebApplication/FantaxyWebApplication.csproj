@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Views\Chat\ChatUserList.cshtml" />
     <Content Remove="wwwroot\js\planet\planet.js" />
     <Content Remove="wwwroot\js\postGenerate.js" />
   </ItemGroup>
@@ -48,6 +49,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="Views\Chat\ChatUserList.cshtml" />
     <None Include="wwwroot\js\planet\planet.js" />
     <None Include="wwwroot\js\post\postGenerate.js" />
   </ItemGroup>

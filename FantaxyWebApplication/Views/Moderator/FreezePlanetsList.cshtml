@@ -1,0 +1,28 @@
+﻿@model IList<SearchModel>
+
+@foreach (var planet in Model)
+{
+    string back = planet.Profile.Replace("\\", "/");
+    <form method="post" asp-controller="Main" asp-action="RedirectToPlanetPage" asp-route-IdPlanet="@planet.Id">
+        <article class="Item" onclick="this.parentNode.submit()" style="background: @($"url(\"{back}\")");
+        background-size: cover;
+        background-position: center;">
+            <img src="@planet.Avatar" alt="@planet.Name" />
+            <input type="text" class="h4" readonly maxlenght="15" value="@Html.Raw(planet.Name)" />
+            <div class="planetButtons">
+
+                @switch (planet.RoleOrStatus)
+                {
+                    case 3: // Замороженный
+                        <span class="roleStatus"> Замороженный </span>
+                        <span class="material-symbols-outlined" style="background: aqua">
+                            ac_unit
+                        </span>
+                        break;
+                }
+
+            </div>
+            <input type="hidden" name="IdPlanet" value="@Html.Raw(planet.Id)" />
+        </article>
+    </form>
+}

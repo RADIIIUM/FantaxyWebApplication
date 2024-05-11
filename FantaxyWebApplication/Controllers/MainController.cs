@@ -165,7 +165,7 @@ namespace FantaxyWebApplication.Controllers
                 planetsIQ = planetsIQ.Where(s => s.Name.Contains(search));
             }
 
-            IList<SearchModel> list = await planetsIQ.AsNoTracking().ToListAsync();
+            IList<SearchModel> list = await planetsIQ.Where(x => x.RoleOrStatus != 3).AsNoTracking().ToListAsync();
             return list;
         }
 

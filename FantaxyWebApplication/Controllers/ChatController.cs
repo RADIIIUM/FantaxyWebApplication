@@ -4,6 +4,7 @@ using FantaxyWebApplication.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
+using System.Web.Helpers;
 
 namespace FantaxyWebApplication.Controllers
 {
@@ -18,9 +19,11 @@ namespace FantaxyWebApplication.Controllers
             _webHostEnvironment = webHostEnvironment;
         }
 
-        public IActionResult Chat(int IdChat)
+        public async Task<IActionResult> Chat(int IdChat)
         {
             int PlanetId = HttpContext.Session.Get<int>("PlanetId");
+            var json3 = HttpContext.Request.Cookies[$"Profile_{PlanetId}"];
+            UserModel? profilePlanet = JsonSerializer.Deserialize<UserModel>(json3);
             var query = from p in _db.Chats
                              where p.IdChat == IdChat
                              join u in _db.ChatsInfos on p.IdChat equals u.IdChat into up
@@ -37,7 +40,16 @@ namespace FantaxyWebApplication.Controllers
                                  IdPlanet = PlanetId,
                              };
             ChatModel? chat = query.FirstOrDefault();
-            if(chat != null) {
+            if(chat != null) 
+            {
+
+                ChatsUsersChatRole? profile = _db.ChatsUsersChatRoles.FirstOrDefault(x => x.IdChat == chat.IdChat && profilePlanet.Login == x.LoginUsers);
+                if(profile == null)
+                {
+                    profile = await CreateChatProfile(profilePlanet.Login, PlanetId);
+                }
+                if(profile.IdChatRole == 5) return View("ChatList");
+                HttpContext.Session.Set<ChatsUsersChatRole>("ChatUser", profile);
                 HttpContext.Session.Set<ChatModel>("Chat", chat);
                 return View(chat);
             }
@@ -47,6 +59,79 @@ namespace FantaxyWebApplication.Controllers
             }
 
         }
+
+        public async Task<ChatsUsersChatRole> CreateChatProfile(string Login, int IdChat)
+        {
+            ChatsUsersChatRole chatProfile = new ChatsUsersChatRole();
+            chatProfile.IdChat = IdChat;
+            chatProfile.IdChatRole = 4;
+            chatProfile.LoginUsers = Login;
+
+            _db.ChatsUsersChatRoles.Add(chatProfile);
+            await _db.SaveChangesAsync();
+            return chatProfile;
+        }
+
+        public async Task<IActionResult> ChatUserList()
+        {
+            return PartialView(await GetUserAsync());
+        }
+
+        private async Task<IList<SearchModel>> GetUserAsync()
+        {
+            ChatModel chat = HttpContext.Session.Get<ChatModel>("Chat");
+            var userOfChat = _db.ChatsUsersChatRoles.Where(x => x.IdChat == chat.IdChat).Join(_db.PlanetUsersInfos, x => x.LoginUsers,
+                y => y.UserLogin, (x, y) => new SearchModel
+                {
+                    Id = y.UserLogin,
+                    Name = y.UserName,
+                    RoleOrStatus = 4,
+                    Avatar = y.Avatar,
+                    Profile = y.ProfileBackground
+                });
+            var usersIQ = _db.GlobalUsersInfos.Join(_db.GlobalRoleUsers, x => x.UserLogin,
+                y => y.UserLogin, (x, y) => new SearchModel
+                {
+                    Id = x.UserLogin,
+                    Name = x.UserName,
+                    RoleOrStatus = y.IdRole ?? 4,
+                    Avatar = x.Avatar,
+                    Profile = x.ProfileBackground
+                });
+            usersIQ = usersIQ.Where(s => s.RoleOrStatus != 5);
+
+            IList<SearchModel> list = await usersIQ.AsNoTracking().ToListAsync();
+            return list;
+        }
+
+        public async Task<IActionResult> DetailChat()
+        {
+            ChatModel chat = HttpContext.Session.Get<ChatModel>("Chat");
+            if(chat != null)
+            {
+                return View(chat);
+            }
+            return NotFound();
+        }
+
+            public async Task<IActionResult> EditChat()
+        {
+            var result = HttpContext.Session.Get<ChatCreate>("EditChat");
+            if (result != null)
+            {
+                return View(result);
+            }
+            ChatModel edit = HttpContext.Session.Get<ChatModel>("Chat");
+            ChatCreate edChat = new ChatCreate();
+            edChat.Name = edit.Name;
+            edChat.Desc = edit.Desc;
+            edChat.ProfileBack = ImageUpload.ConvertIFormFileToByteArray(FileServices.ConvertFileToIFormFile(_webHostEnvironment, edit.ProfileBackground));
+            edChat.MainBackground = ImageUpload.ConvertIFormFileToByteArray(FileServices.ConvertFileToIFormFile(_webHostEnvironment, edit.MainBackground));
+            
+            HttpContext.Session.Set<ChatCreate>("EditChat", edChat);
+            return View(edChat);
+        }
+
         [HttpGet]
         public async Task<IActionResult> MessagePartial()
         {
@@ -147,6 +232,36 @@ namespace FantaxyWebApplication.Controllers
             return View(edit);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> EditExistChat(string Name, string Desc)
+        {
+            int IdPlanet = HttpContext.Session.Get<int>("PlanetId");
+            ChatModel? chat = HttpContext.Session.Get<ChatModel>("Chat");
+
+            if (chat == null)
+            {
+                return NotFound();
+            }
+
+            ChatsInfo? chatInfo = await _db.ChatsInfos.FirstOrDefaultAsync(x => x.IdChat == chat.IdChat);
+            chatInfo.ChatName = Name ?? chat.Name;
+            chatInfo.ChatDescription = Desc ?? chat.Desc;
+
+            ChatCreate? create = HttpContext.Session.Get<ChatCreate>("EditChat");
+            if (create?.MainBackground != null) chatInfo.Background = FileServices.CreateFileFromByteArray(_webHostEnvironment, create.MainBackground, Path.Combine("\\img\\FantasyFiles\\Profiles\\Style\\Chats\\Main", $"{chat.IdChat}_{IdPlanet}.jpg"));
+            else chatInfo.Background = "\\img\\background\\MainBackground.jpg";
+            if (create?.ProfileBack != null) chatInfo.Avatar = FileServices.CreateFileFromByteArray(_webHostEnvironment, create.MainBackground, Path.Combine("\\img\\FantasyFiles\\Profiles\\Style\\Chats\\Profile", $"{chat.IdChat}_{IdPlanet}.jpg"));
+            else chatInfo.Avatar = "\\img\\background\\secondBack.jpg";
+
+            HttpContext.Session.Remove("EditChat");
+            _db.ChatsInfos.Update(chatInfo);
+            await _db.SaveChangesAsync();
+
+            return Redirect("/Chat/ChatList");
+
+        }
+
+
         public async Task<IActionResult> RegChat(string Name, string Desc)
         {
             var json = HttpContext.Request.Cookies["UserInfo"];
@@ -185,9 +300,31 @@ namespace FantaxyWebApplication.Controllers
             await _db.SaveChangesAsync();
 
             return Redirect("/Chat/ChatList");
+
         }
 
 
+        [HttpPost]
+        public async Task<IActionResult> EditMain([FromForm] IFormFile Avatar)
+        {
+            byte[] avatar = ImageUpload.UploadImage(Avatar);
+            var model = HttpContext.Session.Get<ChatCreate>("EditChat");
+            model.MainBackground = avatar;
+            HttpContext.Session.Remove("EditChat");
+            HttpContext.Session.Set<ChatCreate>("EditChat", model);
+            return View("EditChat", model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditProfile([FromForm] IFormFile Avatar)
+        {
+            byte[] avatar = ImageUpload.UploadImage(Avatar);
+            var model = HttpContext.Session.Get<ChatCreate>("EditChat");
+            model.ProfileBack = avatar;
+            HttpContext.Session.Remove("EditChat");
+            HttpContext.Session.Set<ChatCreate>("EditChat", model);
+            return View("EditChat", model);
+        }
 
         public async Task<IActionResult> UploadMain([FromForm] IFormFile Avatar)
         {

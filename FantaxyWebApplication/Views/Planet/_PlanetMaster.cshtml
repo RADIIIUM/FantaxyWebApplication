@@ -112,11 +112,23 @@
                 }
                 @if (userModel.Role == "Модератор" || userModel.Role == "Администратор" || userModel.Role == "Гл. Администратор")
                 {
-                    <a class="link-profile" id="frostPlanet" style="background: #4278f5" asp-controller="Planet" data-tooltip="Заморозить сообщество" asp-action="EditPlanet">
+                    <form method="post" id="frostPlanetForm" >
+                        <button type="button" class="-btn -dark" onclick="FreezePlanet()" style="background: #4278f5" data-tooltip="Разморозить/Заморозить сообщество">
                         <span class="material-symbols-outlined" >
                             ac_unit
                         </span>
-                    </a>
+                    </button>
+                    </form>
+                }
+                @if (userModel.Role == "Администратор" || userModel.Role == "Гл. Администратор")
+                {
+                    <form method="post" id="frostPlanetForm">
+                        <button type="button" onclick="BanPlanet()" class="-btn -dark" style="background: red" data-tooltip="Заблокировать сообщество">
+                            <span class="material-symbols-outlined">
+                                close
+                            </span>
+                        </button>
+                    </form>
                 }
 
             </div>
@@ -154,6 +166,60 @@
     <script type="module" src="~/js/planet/planet.js" charset="utf-8"></script>
     <script src="~/js/planet/paralaxEffect.js" charset="utf-8" ></script>
         <script>
+        function BanPlanet() {
+            if (confirm('Вы уверены, что хотите заблокировать планету?')) {
+                $.ajax({
+                    url: '/Moderator/BanPlanet',
+                    type: 'POST',
+                    contentType: 'application/json', // Add this line
+                    success: function (response) {
+                        if (response.success) {
+                            alert(`Планета была заблокирована`);
+                            history.back();
+                        }
+                        else {
+                            alert(response.reason);
+                        }
+
+                    },
+                    error: function (xhr, status, error) {
+                        // Handle any errors that occur during the request
+                        console.error('Error sending message: ' + error);
+                    }
+                });
+            }
+            else {
+                console.log("User clicked Cancel.");
+            }
+        }
+
+        function FreezePlanet() {
+            if (confirm('Вы уверены, что хотите разморозить/заморозить планету?')) {
+                $.ajax({
+                    url: '/Moderator/PlanetFreeze',
+                    type: 'POST',
+                    contentType: 'application/json', // Add this line
+                    success: function (response) {
+                        if (response.success) {
+                            alert(`Планета была заморожена`);
+                            history.back();
+                        }
+                        else {
+                            alert("Отмена действия");
+                        }
+
+                    },
+                    error: function (xhr, status, error) {
+                        // Handle any errors that occur during the request
+                        console.error('Error sending message: ' + error);
+                    }
+                });
+            }
+            else {
+                console.log("User clicked Cancel.");
+            }
+        }
+
         document.querySelectorAll('.planetItemList').forEach(img => {
             img.addEventListener('click', event => {
                 event.target.parentNode.submit();

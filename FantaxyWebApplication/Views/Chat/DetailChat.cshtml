@@ -1,0 +1,82 @@
+﻿@using System.Text.Json;
+@model ChatModel
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    Layout = "~/Views/Main/_MainMaster.cshtml";
+
+    ViewData["Title"] = "Fantaxy";
+    int? IdPlanet = HttpContextAccessor.HttpContext.Session.GetInt("PlanetId");
+    var json3 = HttpContextAccessor.HttpContext.Request.Cookies[$"Profile_{IdPlanet}"];
+    UserModel? profilePlanet = JsonSerializer.Deserialize<UserModel>(json3);
+    string? main = Model?.MainBackground.Replace("\\", "/");
+    string? profile = Model?.ProfileBackground.Replace("\\", "/");
+    string? back1 = $"url(\"{main}\")";
+    string back2 = $"url(\"{profile}\")";
+}
+
+<style>
+    body {
+        background: @Html.Raw(back1);
+    }
+
+    .chat {
+        background: @Html.Raw(back2);
+    }
+</style>
+
+<link rel="stylesheet" href="~/css/createPlanet.css" />
+<link rel="stylesheet" href="~/css/profile.css" />
+<link rel="stylesheet" href="~/css/chats/chat.css" />
+
+<div class="profileImg second-div">
+    <div class="div-edit">
+        <form>
+            <label class="material-symbols-outlined" data-tooltip="Вернуться назад" for="profileImgInput">
+                account_box
+            </label>
+            <input type="button" onclick="history.back()"  id="profileImgInput" name="Avatar" style="display: none;"  />
+        </form>
+        @if (profilePlanet.Role != "Пользователь" || Model.OwnerLogin == profilePlanet.Login)
+        {
+            <form>
+                <label class="material-symbols-outlined" data-tooltip="Заблокировать чат" for="profileImgInput">
+                    account_box
+                </label>
+                <input type="button" onclick="history.back()" id="profileImgInput" name="Avatar" style="display: none;" />
+            </form>
+        }
+
+    </div>
+</div>
+
+<form method="post" asp-controller="Chat" asp-action="EditExistChat">
+
+    <div class="container">
+
+        <div class="row planetInfo">
+            <h3> @Model.Name </h3>
+            <h3> Описание </h3>
+            <textarea name="Desc" readonly placeholder="Описание вашего чата"> @Model.Desc </textarea>
+            <button type="submit" class="-btn -dark -light -big"> SAVE </button>
+        </div>
+
+        <div class="div-listItems">
+        </div>
+
+    </div>
+</form>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="~/js/chat/userlist.js" charset="utf-8"></script>
+<script>
+    document.getElementById('profileImgInput').addEventListener('change', function () {
+        document.getElementById('profileImgForm').submit();
+    });
+
+
+
+
+    document.getElementById('mainProfileImgInput').addEventListener('change', function () {
+        document.getElementById('mainProfileImgForm').submit();
+    });
+</script>

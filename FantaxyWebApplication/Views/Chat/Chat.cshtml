@@ -1,15 +1,46 @@
-﻿@model ChatModel
+﻿@using System.Text.Json;
+@model ChatModel
 
+@inject IHttpContextAccessor HttpContextAccessor
 @{
-    Layout = "~/Views/Main/_MainMaster.cshtml";
-}
+    var json = HttpContextAccessor.HttpContext.Request.Cookies["UserInfo"];
 
+    UserModel? userModel = JsonSerializer.Deserialize<UserModel>(json);
+    Layout = "~/Views/Main/_MainMaster.cshtml";
+    string? main = Model?.MainBackground.Replace("\\", "/"); ;
+    string? back1 = $"url(\"{main}\")"; ;
+}
+<style>
+    body {
+        background: @Html.Raw(back1);
+    }
+</style>
 
 <link rel="stylesheet" href="~/css/chats/chatInfo.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/profile.css" />
 
-<div id="chatroom">
 
-</div>
+    <div class="profileImg second-div">
+        <div class="div-edit">
+        <form id="profileImgForm" method="post" asp-controller="Chat" asp-action="DetailChat" enctype="multipart/form-data">
+            <label class="material-symbols-outlined" data-tooltip="Информация чата" for="profileImgInput">
+                account_box
+            </label>
+            <input type="submit" id="profileImgInput" style="display: none;" accept="image/png, image/jpeg" />
+        </form>
+        @if (Model.OwnerLogin == userModel.Login)
+        {
+            <form id="profileImgForm" method="post" asp-controller="Chat" asp-action="EditChat" enctype="multipart/form-data">
+                <label class="material-symbols-outlined" data-tooltip="Редактировать чат" for="profileImgInput">
+                    account_box
+                </label>
+                <input type="submit" id="profileImgInput" style="display: none;" accept="image/png, image/jpeg" />
+            </form>
+        }
+
+        </div>
+    </div>
+
 
 <div id="inputForm">
         <input type="text" class="-input -fillInput" id="message" name="message" />

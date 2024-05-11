@@ -247,7 +247,7 @@ namespace FantaxyWebApplication.Controllers
 
             PlanetInfo planetInfo = new PlanetInfo();
             planetInfo.IdPlanetNavigation = planet;
-            planetInfo.PlanetName = Name ?? "Новая планета";
+            planetInfo.PlanetName = string.IsNullOrEmpty(Name) ? "Новая планета" : Name;
             planetInfo.PlanetDescription = Desc ?? "Новая планета на просторах Fantaxy!";
 
             int lastId = _db.Planets.OrderByDescending(p => p.IdPlanet).FirstOrDefault()?.IdPlanet ?? 0;
@@ -284,13 +284,13 @@ namespace FantaxyWebApplication.Controllers
             /* Для куратора */
             GlobalUsersInfo? curator = await _db.GlobalUsersInfos.FirstOrDefaultAsync(x => x.UserLogin == planet.CuratorLogin);
             PlanetUsersInfo? curatorProfile = new PlanetUsersInfo();
-            pui.UserLogin = curator.UserLogin;
-            pui.UserName = curator.UserName;
-            pui.UserDescription = curator.UserDescription ?? "Hello world!";
-            pui.Avatar = curator.Avatar;
-            pui.ProfileBackground = curator.ProfileBackground;
-            pui.MainBackground = curator.MainBackground;
-            pui.IdPlanet = planet.IdPlanet;
+            curatorProfile.UserLogin = curator.UserLogin;
+            curatorProfile.UserName = curator.UserName;
+            curatorProfile.UserDescription = curator.UserDescription ?? "Hello world!";
+            curatorProfile.Avatar = curator.Avatar;
+            curatorProfile.ProfileBackground = curator.ProfileBackground;
+            curatorProfile.MainBackground = curator.MainBackground;
+            curatorProfile.IdPlanet = planet.IdPlanet;
 
             PlanetPlanetRoleUser curatorRole = new PlanetPlanetRoleUser();
             curatorRole.IdPlanetNavigation = planet;

@@ -97,21 +97,61 @@ namespace FantaxyWebApplication.Controllers
 
 
         [HttpPost]
-        public async Task<JsonResult> PlanetFreeze (int Id)
+        public async Task<JsonResult> PlanetFreeze ()
         {
-            StatusesPlanet? planetStatus = await _db.StatusesPlanets.FirstOrDefaultAsync(x => x.IdPlanet == Id);
+            int? IdPlanet = HttpContext.Session.Get<int>("PlanetId");
+            StatusesPlanet? planetStatus = await _db.StatusesPlanets.FirstOrDefaultAsync(x => x.IdPlanet == IdPlanet);
             if (planetStatus != null)
             {
-                planetStatus.IdStatus = 3;
-                _db.StatusesPlanets.Update(planetStatus);
+                if(planetStatus.IdStatus == 3)
+                {
+                    planetStatus.IdStatus = 1;
+                    _db.StatusesPlanets.Update(planetStatus);
+                }
+                else
+                {
+                    planetStatus.IdStatus = 3;
+                    _db.StatusesPlanets.Update(planetStatus);
+                }
                 await _db.SaveChangesAsync();
-
                 return Json(new { success = true });
             }
             else
             {
                 return Json(new { success = false });
             }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> BanPlanet()
+        {
+            int? IdPlanet = HttpContext.Session.Get<int>("PlanetId");
+            Planet planet = _db.Planets.FirstOrDefault(x => x.IdPlanet == IdPlanet);
+            StatusesPlanet? planetStatus = await _db.StatusesPlanets.FirstOrDefaultAsync(x => x.IdPlanet == IdPlanet);
+            if(planetStatus.IdStatus != 3)
+            {
+                return Json(new { success = false, reason = "Планета должна быть сначала заморожена" });
+            }
+            _db.Planets.Remove(planet);
+            await _db.SaveChangesAsync();
+
+            return Json( new { success = true });
+
+        }
+
+        public async Task<IActionResult> FreezePlanets()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> FreezePlanetsList(string search)
+        {
+            if (string.IsNullOrEmpty(search))
+            {
+                return PartialView(await GetFreezePlanetAsync(""));
+            }
+            return PartialView(await GetFreezePlanetAsync(search));
         }
 
 
@@ -127,6 +167,28 @@ namespace FantaxyWebApplication.Controllers
                 return PartialView(await GetBannedUserAsync(""));
             }
             return PartialView(await GetBannedUserAsync(search));
+        }
+
+        private async Task<IList<SearchModel>> GetFreezePlanetAsync(string search)
+        {
+            IQueryable<SearchModel> planetsIQ = from p in _db.PlanetInfos
+                                                join s in _db.StatusesPlanets on p.IdPlanet equals s.IdPlanet into ps
+                                                from s in ps.DefaultIfEmpty()
+                                                select new SearchModel()
+                                                {
+                                                    Id = p.IdPlanet.ToString(),
+                                                    Name = p.PlanetName,
+                                                    RoleOrStatus = s.IdStatus ?? 1,
+                                                    Avatar = p.Avatar,
+                                                    Profile = p.ProfileBackground
+                                                };
+            if (!String.IsNullOrEmpty(search))
+            {
+                planetsIQ = planetsIQ.Where(s => s.Name.Contains(search));
+            }
+
+            IList<SearchModel> list = await planetsIQ.Where(x => x.RoleOrStatus == 3).AsNoTracking().ToListAsync();
+            return list;
         }
 
         private async Task<IList<SearchModel>> GetBannedUserAsync(string search)
