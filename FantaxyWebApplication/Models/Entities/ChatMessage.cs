@@ -10,7 +10,6 @@ namespace FantaxyWebApplication.Models.Entities
         public int? IdChat { get; set; }
         public string MessageText { get; set; } = null!;
 
-        public virtual Chat? IdChatNavigation { get; set; }
         public virtual User? LoginOwnerNavigation { get; set; }
     }
 }

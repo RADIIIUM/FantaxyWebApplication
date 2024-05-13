@@ -93,9 +93,12 @@ namespace FantaxyWebApplication.Controllers
                     userModel.Description = glu.UserDescription;
                     userModel.Login = glu.UserLogin;
                     userModel.Role = await GetRole(glu, IdPlanet);
+                    if(userModel.Role == "Заблокирован") 
+                    {
+                        return Redirect("/Main/Planets");
+                    }
                     var serialize = JsonSerializer.Serialize<UserModel>(userModel);
                     HttpContext.Response.Cookies.Append($"Profile_{IdPlanet}", serialize);
-                    HttpContext.Session.Set("Access", userModel.Role);
 
                 }
                 HttpContext.Session.Set("Access", userModel.Role);

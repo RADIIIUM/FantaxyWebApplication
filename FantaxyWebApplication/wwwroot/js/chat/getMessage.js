@@ -16,3 +16,5 @@ $(document).ready(function () {
     // Trigger the load event on the div-listItems element
     $('#chatroom').trigger('load')
 });
+
+

@@ -27,20 +27,31 @@
 <link rel="stylesheet" href="~/css/createPlanet.css" />
 <link rel="stylesheet" href="~/css/profile.css" />
 <link rel="stylesheet" href="~/css/chats/chat.css" />
+<link rel="stylesheet" href="~/css/items.css" asp-append-version="true" />
 
 <div class="profileImg second-div">
     <div class="div-edit">
         <form>
             <label class="material-symbols-outlined" data-tooltip="Вернуться назад" for="profileImgInput">
-                account_box
+                keyboard_return
             </label>
             <input type="button" onclick="history.back()"  id="profileImgInput" name="Avatar" style="display: none;"  />
         </form>
-        @if (profilePlanet.Role != "Пользователь" || Model.OwnerLogin == profilePlanet.Login)
+        @if (profilePlanet.Role != "Пользователь")
         {
             <form>
                 <label class="material-symbols-outlined" data-tooltip="Заблокировать чат" for="profileImgInput">
-                    account_box
+                    close
+                </label>
+                <input type="button" onclick="history.back()" id="profileImgInput" name="Avatar" style="display: none;" />
+            </form>
+        }
+
+        @if (Model.OwnerLogin == profilePlanet.Login)
+        {
+            <form>
+                <label class="material-symbols-outlined" data-tooltip="Удалить чат" for="profileImgInput">
+                    delete
                 </label>
                 <input type="button" onclick="history.back()" id="profileImgInput" name="Avatar" style="display: none;" />
             </form>
@@ -57,7 +68,6 @@
             <h3> @Model.Name </h3>
             <h3> Описание </h3>
             <textarea name="Desc" readonly placeholder="Описание вашего чата"> @Model.Desc </textarea>
-            <button type="submit" class="-btn -dark -light -big"> SAVE </button>
         </div>
 
         <div class="div-listItems">
@@ -67,7 +77,29 @@
 </form>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="~/js/chat/userlist.js" charset="utf-8"></script>
+@if (Model.OwnerLogin == profilePlanet.Login)
+{
+<script charset="utf-8">
+    $(document).ready(async function () {
+        $('.div-listItems').on('load', function () {
+            // Get the search term
+            // Load the UsersPartial view with the search term
+                $.get('/Chat/AdminUserList', function (data) {
+                // Replace the contents of the div-listItems div with the partial view
+                $('.div-listItems').html(data);
+            });
+        });
+
+
+        $('.div-listItems').trigger('load')
+    });
+</script>
+}
+else
+{
+    <script src="~/js/chat/userlist.js" charset="utf-8"></script>
+}
+
 <script>
     document.getElementById('profileImgInput').addEventListener('change', function () {
         document.getElementById('profileImgForm').submit();

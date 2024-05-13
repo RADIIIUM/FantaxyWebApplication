@@ -1,5 +1,8 @@
 ﻿@model UserModel
+@inject IHttpContextAccessor access
 @{
+    access.HttpContext.Session.Remove("EditProfile");
+
     Layout = "~/Views/Main/_MainMaster.cshtml";
 
     ViewData["Title"] = "Fantaxy";
@@ -9,8 +12,8 @@
     string? back1 = $"url(\"{main}\")";
     string? back2 = $"url(\"{profile}\")";
 }
-
 <link rel="stylesheet" href="~/css/profile.css" />
+<link rel="stylesheet" href="~/css/posts/post.css" />
 
 <style>
     body {
@@ -32,9 +35,9 @@
 
 <div class="profileImg second-div">
     <div class="div-edit">
-        <a asp-controller="Main" title="Вернуться назад" asp-action="Users">
+        <a asp-controller="Profile" title="Редактирование профиля" asp-action="EditProfilePlanet">
             <span class="material-symbols-outlined">
-                reply
+                edit
             </span>
         </a>
 
@@ -49,19 +52,54 @@
     </div>
 </div>
 <div class="maincontent">
+    <input type="hidden" id="UserLogin" value="@Model.Login" />
+    <input type="hidden" id="UserRole" value="@Model.Role" />
+
     <h1 style="text-align: center"> Описание </h1>
     <textarea class="desc" readonly maxlength="2000">@Model.Description</textarea>
 
-    <form asp-controller="Home"
-          asp-action="Logout">
-        <input type="submit"
-               class="btn -dark -big" value="Log Out" />
-    </form>
+    <div class="modal-content" style="margin-bottom: 10px; margin-top: 10px;">
+        <h1>Редактировать роль пользователю </h1>
+        <p> </p>
+        <h2> <button onclick="changeRole()" class="-btn -dark -medium" id="roleBtn"> @Model.Role </button> </h2>
+        <input type="hidden" class="userLogin" value="@Model.Login" />
+        <button onclick="applyChangeRole()" class="-btn -big -light"> Изменить роль </button>
 
-    <form asp-controller="Home"
-          asp-action="Logout">
-        <input type="submit"
-               class="btn -dark -big" value="Log Out" />
-    </form>
+
+    </div>
 
 </div>
+
+
+<div class="postList">
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="~/js/profile/createPost.js" charset="utf-8"></script>
+<script src="~/js/moderator/planetuserchange.js" charset="utf-8"></script>
+<script charset="utf-8">
+    $(document).ready(function () {
+        // Get the search input element
+        // Set up click handlers for the links
+        // (no need to set up click handlers if we're not using links)
+
+        // Wait for the div-listItems element to be ready
+        $('.postList').on('load', function () {
+            // Get the search term
+            // Load the UsersPartial view with the search term
+            let login = $(".userLogin").val();
+            $.ajax({
+                type: 'GET',
+                url: '/Post/UsersPost',
+                data: { Login: login },
+                success: function (data) {
+                    $('.postList').html(data);
+                }
+            });
+        });
+
+        // Trigger the load event on the div-listItems element
+        $('.postList').trigger('load')
+    });
+</script>
+

@@ -104,9 +104,18 @@
 
                 @if (profilePlanet.Role == "Владелец" || profilePlanet.Role == "Администратор")
                 {
+
                     <a class="link-profile" id="editPlanet" asp-controller="Planet" data-tooltip="Редактирование планеты" asp-action="EditPlanet">
                         <span class="material-symbols-outlined">
                             edit
+                        </span>
+                    </a>
+                }
+                @if (profilePlanet.Role == "Модератор" || profilePlanet.Role == "Владелец" || profilePlanet.Role == "Администратор")
+                {
+                    <a asp-controller="Moderator" asp-action="BannedPlanetUser">
+                        <span class="material-symbols-outlined" data-tooltip="Список заблокированных пользователей">
+                            group
                         </span>
                     </a>
                 }
@@ -119,6 +128,7 @@
                         </span>
                     </button>
                     </form>
+
                 }
                 @if (userModel.Role == "Администратор" || userModel.Role == "Гл. Администратор")
                 {
@@ -146,6 +156,7 @@
                     <a asp-action="MainPage" asp-controller="Planet" asp-route-page="Main"> Главная страница </a>
                     <a asp-action="Posts" asp-controller="Planet"> Посты </a>
                     <a asp-action="ChatList" asp-controller="Chat"> Чаты </a>
+                    <a asp-action="Users" asp-controller="Planet"> Чаты </a>
                     <a> Пользователи </a>
                 </div>
             </nav>

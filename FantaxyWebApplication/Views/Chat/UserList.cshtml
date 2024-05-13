@@ -1,19 +1,19 @@
-﻿@using FantaxyWebApplication.Models;
-@model IList<SearchModel>
+﻿@model IList<SearchModel>
 
 
 @foreach (var user in Model)
 {
     string back = user.Profile.Replace("\\", "/");
-    <form method="post" asp-controller="Profile" asp-action="OtherMainProfile" asp-route-Login="@user.Id">
+    <form method="post" asp-controller="Profile" asp-action="OtherPlanetProfile" asp-route-Login="@user.Id">
         <article class="Item" onclick="this.parentNode.submit()" style="background: @($"url(\"{back}\")");
         background-size: cover;
         background-position: center;">
             <img src="@user.Avatar" alt="@user.Name" />
             <input type="text" class="h4" readonly maxlenght="15" value="@Html.Raw(user.Name)" />
-            <input type="hidden" name="Login" value="@Html.Raw(user.Id)" />
         </article>
     </form>
 }
+
+
 
 

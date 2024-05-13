@@ -1,0 +1,72 @@
+﻿@using Newtonsoft.Json;
+@model IList<PostModel>
+
+<script>
+    function setButtonColors(post) {
+        let likeButton = document.querySelector(`button[data-post-id="${post.IdPost}"][data-type="like"]`);
+        let dislikeButton = document.querySelector(`button[data-post-id="${post.IdPost}"][data-type="dislike"]`);
+
+        if (post.IsLiked === true) {
+            likeButton.classList.add('green');
+            dislikeButton.classList.remove('red');
+        }
+        if (post.IsLiked === false) {
+            likeButton.classList.remove('green');
+            dislikeButton.classList.add('red');
+        }
+    }
+</script>
+
+
+@foreach (var post in Model)
+{
+    <div class="post">
+        <div class="post-author">
+            <img src="@post.authorInfo.Avatar" />
+            <h5> @post.authorInfo.UserName </h5>
+        </div>
+
+        <h1> @post.Title </h1>
+        <textarea readonly> @post.Description </textarea>
+
+        <div class="post-likes-dislikes">
+
+            <button class="btn" id="green" data-type="like" data-post-id="@post.IdPost">
+                <span class="material-symbols-outlined">
+                    thumb_up
+                </span>
+            </button>
+
+            <span class="likeCount material-symbols-outlined" data-post-id="@post.IdPost">
+                @post.LikeCount
+            </span>
+
+            <button class="btn" id="red" data-type="dislike" data-post-id="@post.IdPost">
+                <span class="material-symbols-outlined">
+                    thumb_down
+                </span>
+            </button>
+
+            <span class="dislikeCount material-symbols-outlined" data-post-id="@post.IdPost">
+                @post.DislikeCount
+            </span>
+            <script>
+                setButtonColors(@Html.Raw(JsonConvert.SerializeObject(post)));
+            </script>
+        </div>
+
+        <div class="post-images">
+            @if (post.Files != null)
+            {
+                foreach (var image in post.Files)
+                {
+                    <img src="@image" />
+                }
+            }
+        </div>
+
+    </div>
+}
+
+<script src="~/js/post/likeOrdislike.js"></script>
+

@@ -40,6 +40,33 @@ namespace FantaxyWebApplication.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<JsonResult> GetPlanetAccess()
+        {
+            int? PlanetId = HttpContext.Session.GetInt("PlanetId");
+            var usInfo = HttpContext.Request.Cookies[$"Profile_{PlanetId}"];
+            UserModel? user = JsonSerializer.Deserialize<UserModel>(usInfo);
+            if (user != null)
+            {
+                int? UserRole = await (from p in _db.PlanetPlanetRoleUsers
+                                       where p.UserLogin == user.Login
+                                       select p.IdRole).FirstOrDefaultAsync();
+                if (UserRole <= 3 && UserRole > 0)
+                {
+                    return Json(new { success = true, role = UserRole });
+                }
+                else
+                {
+                    return Json(new { success = false });
+                }
+            }
+            else
+            {
+                return Json(new { success = false });
+            }
+        }
+
+
         [HttpPost]
         public async Task<JsonResult> ChangeRole ([FromBody] UserModel user)
         {
@@ -59,7 +86,7 @@ namespace FantaxyWebApplication.Controllers
             }
         }
 
-            [HttpPost]
+        [HttpPost]
         public async Task<JsonResult> UserBan ([FromBody] ModeratorModel user)
         {
             GlobalRoleUser? userRole = await _db.GlobalRoleUsers.FirstOrDefaultAsync(x => x.UserLogin == user.Login);
@@ -94,6 +121,66 @@ namespace FantaxyWebApplication.Controllers
                 return Json(new { success = false });
             }
         }
+
+
+        [HttpPost]
+        public async Task<JsonResult> ChangePlanetRole([FromBody] UserModel user)
+        {
+            int? PlanetId = HttpContext.Session.GetInt("PlanetId");
+            PlanetPlanetRoleUser? userRole = await _db.PlanetPlanetRoleUsers.FirstOrDefaultAsync(x => x.UserLogin == user.Login && x.IdPlanet == PlanetId);
+            if (userRole != null)
+            {
+                int? IdRole = _db.PlanetRoles.FirstOrDefault(x => x.RoleName.Contains(user.Role) || x.RoleName == user.Role).IdRole;
+                userRole.IdRole = IdRole ?? 4;
+                _db.PlanetPlanetRoleUsers.Update(userRole);
+                await _db.SaveChangesAsync();
+
+                return Json(new { success = true });
+            }
+            else
+            {
+                return Json(new { success = false });
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> PlanetUserBan([FromBody] ModeratorModel user)
+        {
+            int? PlanetId = HttpContext.Session.GetInt("PlanetId");
+            PlanetPlanetRoleUser? userRole = await _db.PlanetPlanetRoleUsers.FirstOrDefaultAsync(x => x.UserLogin == user.Login && x.IdPlanet == PlanetId);
+            if (userRole != null)
+            {
+                userRole.IdRole = 5;
+                _db.PlanetPlanetRoleUsers.Update(userRole);
+                await _db.SaveChangesAsync();
+
+                return Json(new { success = true });
+            }
+            else
+            {
+                return Json(new { success = false });
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> PlanetUserUnban([FromBody] ModeratorModel user)
+        {
+            int? PlanetId = HttpContext.Session.GetInt("PlanetId");
+            PlanetPlanetRoleUser? userRole = await _db.PlanetPlanetRoleUsers.FirstOrDefaultAsync(x => x.UserLogin == user.Login && x.IdPlanet == PlanetId);
+            if (userRole != null)
+            {
+                userRole.IdRole = 4;
+                _db.PlanetPlanetRoleUsers.Update(userRole);
+                await _db.SaveChangesAsync();
+
+                return Json(new { success = true });
+            }
+            else
+            {
+                return Json(new { success = false });
+            }
+        }
+
 
 
         [HttpPost]
@@ -154,6 +241,11 @@ namespace FantaxyWebApplication.Controllers
             return PartialView(await GetFreezePlanetAsync(search));
         }
 
+        public async Task<IActionResult> BannedPlanetUser()
+        {
+            return View();
+        }
+
 
         public async Task<IActionResult> BannedUser()
         {
@@ -167,6 +259,37 @@ namespace FantaxyWebApplication.Controllers
                 return PartialView(await GetBannedUserAsync(""));
             }
             return PartialView(await GetBannedUserAsync(search));
+        }
+
+        public async Task<IActionResult> BannedPlanetUserList(string search)
+        {
+            if (string.IsNullOrEmpty(search))
+            {
+                return PartialView(await GetBannedUserAsync(""));
+            }
+            return PartialView(await GetBannedUserAsync(search));
+        }
+
+        private async Task<IList<SearchModel>> GetBannedPlanetUserAsync(string search)
+        {
+            var usersIQ = _db.PlanetUsersInfos.Join(_db.PlanetPlanetRoleUsers, x => x.UserLogin,
+                y => y.UserLogin, (x, y) => new SearchModel
+                {
+                    Id = x.UserLogin,
+                    Name = x.UserName,
+                    RoleOrStatus = y.IdRole ?? 4,
+                    Avatar = x.Avatar,
+                    Profile = x.ProfileBackground
+                });
+            usersIQ = usersIQ.Where(s => s.RoleOrStatus == 5);
+
+            if (!String.IsNullOrEmpty(search))
+            {
+                usersIQ = usersIQ.Where(s => s.Name.ToUpper().Contains(search.ToUpper()));
+            }
+
+            IList<SearchModel> list = await usersIQ.AsNoTracking().ToListAsync();
+            return list;
         }
 
         private async Task<IList<SearchModel>> GetFreezePlanetAsync(string search)

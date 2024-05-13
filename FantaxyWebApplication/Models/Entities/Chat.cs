@@ -8,8 +8,6 @@ namespace FantaxyWebApplication.Models.Entities
         public Chat()
         {
             ChatFiles = new HashSet<ChatFile>();
-            ChatMessages = new HashSet<ChatMessage>();
-            ChatsUsersChatRoles = new HashSet<ChatsUsersChatRole>();
         }
 
         public int IdChat { get; set; }
@@ -20,7 +18,5 @@ namespace FantaxyWebApplication.Models.Entities
         public virtual User? OwnerLoginNavigation { get; set; }
         public virtual ChatsInfo? ChatsInfo { get; set; }
         public virtual ICollection<ChatFile> ChatFiles { get; set; }
-        public virtual ICollection<ChatMessage> ChatMessages { get; set; }
-        public virtual ICollection<ChatsUsersChatRole> ChatsUsersChatRoles { get; set; }
     }
 }

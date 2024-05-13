@@ -1,0 +1,87 @@
+﻿@model IList<SearchModel>
+
+
+@foreach (var user in Model)
+{
+    string back = user.Profile.Replace("\\", "/");
+    <form method="post" asp-controller="Profile" asp-action="OtherPlanetProfile" asp-route-Login="@user.Id">
+        <article class="Item" oncontextmenu="return showContextMenu(event, this)" style="background: @($"url(\"{back}\")");
+background-size: cover;
+background-position: center;">
+            <img src="@user.Avatar" alt="@user.Name" />
+            <input type="hidden" class="userId" value="@user.Id" />
+            <input type="text" class="h4" readonly maxlenght="15" value="@Html.Raw(user.Name)" />
+        </article>
+    </form>
+}
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    function BanChatUser(login) {
+        $.ajax({
+            url: '/Chat/BanChatUser',
+            type: 'POST',
+            contentType: 'application/json', // Add this line
+            data: JSON.stringify({ Login: login }),
+            success: function (response) {
+                if (response.success) {
+                    alert('Пользователь был заблокирован');
+                }
+            },
+            error: function (xhr, status, error) {
+                // Handle any errors that occur during the request
+                console.error('Error sending message: ' + error);
+            }
+        });
+    }
+</script>
+<script>
+    function showContextMenu(event, article) {
+        event.preventDefault();
+
+        // Создаем меню
+        // Создаем меню
+        const menu = document.createElement('div');
+        menu.className = 'context-menu';
+        menu.style.left = event.clientX + 'px';
+        menu.style.top = event.clientY + 'px';
+
+        // Добавляем кнопки в меню
+        const blockButton = document.createElement('button');
+        blockButton.textContent = 'Заблокировать';
+        blockButton.onclick = () => {
+            const userId = article.querySelector('.userId').value;
+            BanChatUser(userId);
+            menu.remove();
+        };
+        menu.appendChild(blockButton);
+
+        // Добавляем меню в документ
+        document.body.appendChild(menu);
+
+        // Убираем меню после клика вне него
+        document.addEventListener('click', () => menu.remove());
+
+        return false;
+    }
+</script>
+
+<style>
+    .context-menu {
+        position: absolute;
+        border: 1px solid #ccc;
+        background-color: purple;
+        color: white;
+        padding: 5px;
+        z-index: 1000;
+    }
+
+        .context-menu button {
+            margin: 2px;
+            padding: 2px 5px;
+            background-color: #f2f2f2;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+</style>

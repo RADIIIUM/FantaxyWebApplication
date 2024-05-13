@@ -49,6 +49,32 @@ namespace FantaxyWebApplication.Controllers
             IList<PostModel> list = await posts.AsNoTracking().ToListAsync();
             return PartialView(list);
         }
+        [HttpGet]
+        public async Task<IActionResult> ConcretPost(int IdPlanet)
+        {
+            IdPlanet = HttpContext.Session.Get<int>("PlanetId");
+            var json = HttpContext.Request.Cookies[$"Profile_{IdPlanet}"];
+            UserModel? userModel = JsonSerializer.Deserialize<UserModel>(json);
+
+            var posts = from p in _db.Posts
+                        where p.IdPlanet == IdPlanet && p.OwnerLogin == userModel.Login
+                        join u in _db.PlanetUsersInfos on p.OwnerLogin equals u.UserLogin into up
+                        from u in up.DefaultIfEmpty()
+                        select new PostModel()
+                        {
+                            IdPost = p.IdPost,
+                            Title = p.PostsInfo.Title,
+                            Description = p.PostsInfo.PostText,
+                            Files = _db.PostFiles.Where(x => x.IdPost == p.IdPost).Select(x => x.PathFile).ToList<string>(),
+                            authorInfo = u,
+                            LikeCount = _db.LikeDislikePosts.Count(y => y.IdPost == p.IdPost && y.LikeOrDislike == true),
+                            DislikeCount = _db.LikeDislikePosts.Count(y => y.IdPost == p.IdPost && y.LikeOrDislike == false),
+                            IsLiked = _db.LikeDislikePosts.FirstOrDefault(x => x.IdPost == p.IdPost && userModel.Login == x.UserLogin).LikeOrDislike,
+                        };
+
+            IList<PostModel> list = await posts.AsNoTracking().ToListAsync();
+            return PartialView(list);
+        }
 
         public async Task<int?> GetIdPlanet(int? IdPlanet)
         {
@@ -80,7 +106,12 @@ namespace FantaxyWebApplication.Controllers
 
                 if (userModel != null)
                 {
-                    return View(plInfo);
+                    if(userModel.Role != "Заблокирован")
+                    {
+                        return View(plInfo);
+                    }
+                    return Redirect("/Main/Planets");
+
                 }
                 else
                 {
@@ -89,7 +120,41 @@ namespace FantaxyWebApplication.Controllers
             }
 
         }
+        public IActionResult Users()
+        {
+            return View();
+        }
 
+        public async Task<IActionResult> UserList(string search)
+        {
+            if (string.IsNullOrEmpty(search))
+            {
+                return PartialView(await GetUserAsync(""));
+            }
+            return PartialView(await GetUserAsync(search));
+        }
+
+        private async Task<IList<SearchModel>> GetUserAsync(string search)
+        {
+            var usersIQ = _db.PlanetUsersInfos.Join(_db.PlanetPlanetRoleUsers, x => x.UserLogin,
+                y => y.UserLogin, (x, y) => new SearchModel
+                {
+                    Id = x.UserLogin,
+                    Name = x.UserName,
+                    RoleOrStatus = y.IdRole ?? 4,
+                    Avatar = x.Avatar,
+                    Profile = x.ProfileBackground
+                });
+            usersIQ = usersIQ.Where(s => s.RoleOrStatus != 5);
+
+            if (!String.IsNullOrEmpty(search))
+            {
+                usersIQ = usersIQ.Where(s => s.Name.ToUpper().Contains(search.ToUpper()));
+            }
+
+            IList<SearchModel> list = await usersIQ.AsNoTracking().ToListAsync();
+            return list;
+        }
         /* 
         РЕДАКТИРОВАНИЕ ПЛАНЕТЫ
         РЕДАКТИРОВАНИЕ ПЛАНЕТЫ

@@ -43,10 +43,10 @@ namespace FantaxyWebApplication.Controllers
             if(chat != null) 
             {
 
-                ChatsUsersChatRole? profile = _db.ChatsUsersChatRoles.FirstOrDefault(x => x.IdChat == chat.IdChat && profilePlanet.Login == x.LoginUsers);
+                ChatsUsersChatRole? profile = _db.ChatsUsersChatRoles.FirstOrDefault(x => x.IdChat == IdChat && profilePlanet.Login == x.LoginUsers);
                 if(profile == null)
                 {
-                    profile = await CreateChatProfile(profilePlanet.Login, PlanetId);
+                    profile = await CreateChatProfile(profilePlanet.Login, chat.IdChat);
                 }
                 if(profile.IdChatRole == 5) return View("ChatList");
                 HttpContext.Session.Set<ChatsUsersChatRole>("ChatUser", profile);
@@ -72,7 +72,31 @@ namespace FantaxyWebApplication.Controllers
             return chatProfile;
         }
 
-        public async Task<IActionResult> ChatUserList()
+        [HttpPost]
+        public async Task<JsonResult> BanChatUser([FromBody] UserModel model)
+        {
+                ChatsUsersChatRole? user = _db.ChatsUsersChatRoles.FirstOrDefault(x => x.LoginUsers == model.Login);
+                if(user != null)
+                {
+                    if(user.IdChatRole == 1)
+                    {
+                        return Json(new { success = false });
+                    }
+                    user.IdChatRole = 5;
+                    _db.ChatsUsersChatRoles.Update(user);
+                    await _db.SaveChangesAsync();
+
+                    return Json(new { success = true });
+                }
+                return Json(new { success = false });
+        }
+
+        public async Task<IActionResult> UserList()
+        {
+            return PartialView(await GetUserAsync());
+        }
+
+        public async Task<IActionResult> AdminUserList()
         {
             return PartialView(await GetUserAsync());
         }
@@ -80,27 +104,19 @@ namespace FantaxyWebApplication.Controllers
         private async Task<IList<SearchModel>> GetUserAsync()
         {
             ChatModel chat = HttpContext.Session.Get<ChatModel>("Chat");
-            var userOfChat = _db.ChatsUsersChatRoles.Where(x => x.IdChat == chat.IdChat).Join(_db.PlanetUsersInfos, x => x.LoginUsers,
-                y => y.UserLogin, (x, y) => new SearchModel
+            var userOfChat = _db.ChatsUsersChatRoles.Where(x => x.IdChat == chat.IdChat).Join(_db.PlanetUsersInfos, y => y.LoginUsers,
+                x => x.UserLogin, (x, y) => new SearchModel
                 {
-                    Id = y.UserLogin,
+                    Id = x.LoginUsers,
                     Name = y.UserName,
                     RoleOrStatus = 4,
                     Avatar = y.Avatar,
                     Profile = y.ProfileBackground
-                });
-            var usersIQ = _db.GlobalUsersInfos.Join(_db.GlobalRoleUsers, x => x.UserLogin,
-                y => y.UserLogin, (x, y) => new SearchModel
-                {
-                    Id = x.UserLogin,
-                    Name = x.UserName,
-                    RoleOrStatus = y.IdRole ?? 4,
-                    Avatar = x.Avatar,
-                    Profile = x.ProfileBackground
-                });
-            usersIQ = usersIQ.Where(s => s.RoleOrStatus != 5);
+                })
+                .Distinct();
+            userOfChat = userOfChat.Where(s => s.RoleOrStatus != 5);
 
-            IList<SearchModel> list = await usersIQ.AsNoTracking().ToListAsync();
+            IList<SearchModel> list = await userOfChat.AsNoTracking().ToListAsync();
             return list;
         }
 
@@ -291,7 +307,7 @@ namespace FantaxyWebApplication.Controllers
             else chatInfo.Avatar = "\\img\\background\\secondBack.jpg";
 
             ChatsUsersChatRole chatRole = new ChatsUsersChatRole();
-            chatRole.IdChatNavigation = chat;
+            chatRole.IdChat = chat.IdChat;
             chatRole.LoginUsers = user.UserLogin;
             chatRole.IdChatRole = 1; // 1 - Владелец, 2 - Админ, 3 - Модер, 4 - Пользователь, 5 - Заблокирован
             HttpContext.Session.Remove("CreateChat");

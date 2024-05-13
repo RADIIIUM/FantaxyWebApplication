@@ -171,6 +171,32 @@ namespace FantaxyWebApplication.Controllers
             }
         }
 
+        [HttpPost]
+        public async Task<IActionResult> OtherPlanetProfile(string Login)
+        {
+            int? PlanetId = HttpContext.Session.GetInt("PlanetId");
+            PlanetUsersInfo? glu = await _db.PlanetUsersInfos.FirstOrDefaultAsync(x => x.UserLogin == Login && x.IdPlanet == PlanetId);
+            UserModel us = new UserModel();
+            if (glu != null)
+            {
+                us.Name = glu.UserName;
+                us.Avatar = glu.Avatar;
+                us.Main = glu.MainBackground;
+                us.Profile = glu.ProfileBackground;
+                us.Description = glu.UserDescription;
+                us.Login = glu.UserLogin;
+                us.Email = "Email";
+                us.Telephone = "Telephone";
+                us.Role = await GetRole(glu, PlanetId ?? -1);
+
+                return View(us);
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
         public async Task<IActionResult> MainProfile()
         {
             HttpContext.Session.Remove("EditProfile");

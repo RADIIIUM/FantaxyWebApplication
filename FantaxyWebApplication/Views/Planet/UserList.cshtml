@@ -1,0 +1,40 @@
+﻿@model IList<SearchModel>
+
+
+@foreach (var user in Model)
+{
+    string back = user.Profile.Replace("\\", "/");
+    <form method="post" asp-controller="Profile" asp-action="OtherPlanetProfile" asp-route-Login="@user.Id">
+        <article class="Item" onclick="this.parentNode.submit()" style="background: @($"url(\"{back}\")");
+        background-size: cover;
+        background-position: center;">
+            <img src="@user.Avatar" alt="@user.Name" />
+            <input type="text" class="h4" readonly maxlenght="15" value="@Html.Raw(user.Name)" />
+            <span class="roleStatus"> @GetRoleStatus(user.RoleOrStatus) </span>
+            <input type="hidden" name="Login" value="@Html.Raw(user.Id)" />
+        </article>
+    </form>
+}
+
+
+@functions {
+    string GetRoleStatus(int role)
+    {
+        switch (role)
+        {
+            case 1:
+                return "Владелец";
+            case 2:
+                return "Администратор";
+            case 3:
+                return "Модератор";
+            case 4:
+                return "Пользователь";
+            case 6:
+                return "Куратор";
+            default:
+                return "Пользователь";
+        }
+    }
+}
+

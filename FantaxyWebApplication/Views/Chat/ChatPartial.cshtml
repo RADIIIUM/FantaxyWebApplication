@@ -1,35 +1,37 @@
 ﻿@model IList<ChatModel>
 
-<form asp-action="Chat" asp-controller="Chat">
-    @foreach(var chat in Model)
-    {
-        string back = chat.ProfileBackground.Replace("\\", "/");
-        <div class="chat" style="background: @($"url(\"{back}\")");
-            background-size: cover;
-            background-position: center;">
-            <input type="hidden" name="IdChat" value="@chat.IdChat" />
-            <div class="chat-info">
-                <h1> @chat.Name </h1>
-                <p>
-                    Кол-во участников:
-                    <span> @chat.MembersCount </span>
-                </p>
-            </div>
-            <div class="chat-btn">
-                <button class="-btn -light" data-tooltip="Войти в чат"
-                        type="submit">
-                    <span class="material-symbols-outlined">
-                        login
-                    </span>
-                </button>
 
-                <button class="-btn -dark" data-tooltip="Заблокировать">
-                    <span class="material-symbols-outlined">
-                        priority_high
-                    </span>
-                </button>
+@foreach(var chat in Model)
+{
+    string back = chat.ProfileBackground.Replace("\\", "/");
+<form asp-action="Chat" asp-controller="Chat" asp-route-IdChat="@chat.IdChat">
 
-            </div>
+    <div class="chat" style="background: @($"url(\"{@back}\")");
+        background-size: cover;
+        background-position: center;">
+        <div class="chat-info">
+            <h1> @chat.Name </h1>
+            <p>
+                Кол-во участников:
+                <span> @chat.MembersCount </span>
+            </p>
         </div>
-    }
-</form>
+        <div class="chat-btn">
+            <button class="-btn -light" data-tooltip="Войти в чат"
+                    type="submit">
+                <span class="material-symbols-outlined">
+                    login
+                </span>
+            </button>
+
+            <button class="-btn -dark" data-tooltip="Заблокировать">
+                <span class="material-symbols-outlined">
+                    priority_high
+                </span>
+            </button>
+
+        </div>
+    </div>
+
+    </form>
+}

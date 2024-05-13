@@ -97,11 +97,6 @@ namespace FantaxyWebApplication.Models.Entities
 
                 entity.Property(e => e.MessageText).HasMaxLength(2000);
 
-                entity.HasOne(d => d.IdChatNavigation)
-                    .WithMany(p => p.ChatMessages)
-                    .HasForeignKey(d => d.IdChat)
-                    .HasConstraintName("FK__ChatMessa__IdCha__02FC7413");
-
                 entity.HasOne(d => d.LoginOwnerNavigation)
                     .WithMany(p => p.ChatMessages)
                     .HasForeignKey(d => d.LoginOwner)
@@ -141,7 +136,6 @@ namespace FantaxyWebApplication.Models.Entities
                 entity.HasOne(d => d.IdChatNavigation)
                     .WithOne(p => p.ChatsInfo)
                     .HasForeignKey<ChatsInfo>(d => d.IdChat)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__ChatsInfo__IdCha__68487DD7");
             });
 
@@ -155,11 +149,6 @@ namespace FantaxyWebApplication.Models.Entities
                 entity.Property(e => e.IdCU).HasColumnName("IdC_U");
 
                 entity.Property(e => e.LoginUsers).HasMaxLength(50);
-
-                entity.HasOne(d => d.IdChatNavigation)
-                    .WithMany(p => p.ChatsUsersChatRoles)
-                    .HasForeignKey(d => d.IdChat)
-                    .HasConstraintName("FK__Chats_Use__IdCha__6383C8BA");
 
                 entity.HasOne(d => d.IdChatRoleNavigation)
                     .WithMany(p => p.ChatsUsersChatRoles)

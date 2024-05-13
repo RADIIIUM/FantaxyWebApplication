@@ -95,7 +95,31 @@
     </div>
 </div>
 
+
+
 <div class="postList">
 </div>
 
-<script src="~/js/profile/createPost.js" charset="utf-8" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="~/js/profile/createPost.js" charset="utf-8"></script>
+<script charset="utf-8">
+    $(document).ready(function () {
+        // Get the search input element
+        // Set up click handlers for the links
+        // (no need to set up click handlers if we're not using links)
+
+        // Wait for the div-listItems element to be ready
+        $('.postList').on('load', function () {
+            // Get the search term
+            // Load the UsersPartial view with the search term
+            $.get('/Planet/ConcretPost', function (data) {
+                // Replace the contents of the div-listItems div with the partial view
+                $('.postList').html(data);
+            });
+        });
+
+        // Trigger the load event on the div-listItems element
+        $('.postList').trigger('load')
+    });
+</script>
+
