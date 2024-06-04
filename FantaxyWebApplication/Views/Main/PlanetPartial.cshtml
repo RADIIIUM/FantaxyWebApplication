@@ -9,31 +9,6 @@
         background-position: center;">
             <img src="@planet.Avatar" alt="@planet.Name" />
             <input type="text" class="h4" readonly maxlenght="15" value="@Html.Raw(planet.Name)" />
-                <div class="planetButtons">
-
-                @switch (planet.RoleOrStatus)
-                {
-                    case 1: // Публичный
-                            <span class="roleStatus"> Публичный </span>
-                            <span class="material-symbols-outlined" style="background: green">
-                                groups
-                            </span>
-                     break;
-                    case 2: // Частный
-                        <span class="roleStatus"> Частный </span>
-                        <span class="material-symbols-outlined" style="background: red">
-                            lock
-                        </span>
-                        break;
-                    default:
-                        <span class="roleStatus"> Публичный </span>
-                        <span class="material-symbols-outlined" style="background: green">
-                            groups
-                            </span>
-                    break;
-                }
-
-                </div>
             <input type="hidden" name="IdPlanet" value="@Html.Raw(planet.Id)" />
         </article>
     </form>

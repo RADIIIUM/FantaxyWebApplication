@@ -29,9 +29,16 @@
     border-radius: 30px;
     background: #c500c1;
 }
-
-    #navLink a, #navLink a:visited,
-    #navLink a:active, #navLink a:link {
+a, a:visited,
+a:active, a:link {
+    color: white;
+    text-decoration: none
+}
+        a:hover {
+            color: #ff8afd;
+            text-decoration: none
+        }
+        #navLink a, #navLink a:visited, #navLink a:active, #navLink a:link {
         padding-left: 10px;
         user-select: none;
         padding-right: 10px;
