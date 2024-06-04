@@ -136,15 +136,16 @@ namespace FantaxyWebApplication.Controllers
 
         private async Task<IList<SearchModel>> GetUserAsync(string search)
         {
-            var usersIQ = _db.PlanetUsersInfos.Join(_db.PlanetPlanetRoleUsers, x => x.UserLogin,
-                y => y.UserLogin, (x, y) => new SearchModel
-                {
-                    Id = x.UserLogin,
-                    Name = x.UserName,
-                    RoleOrStatus = y.IdRole ?? 4,
-                    Avatar = x.Avatar,
-                    Profile = x.ProfileBackground
-                });
+            int? IdPlanet = HttpContext.Session.Get<int>("PlanetId");
+            var usersIQ = _db.PlanetUsersInfos.Where(x => x.IdPlanet == IdPlanet).Select(x => new SearchModel
+            {
+                Id = x.UserLogin,
+                Name = x.UserName,
+                RoleOrStatus = _db.PlanetPlanetRoleUsers.OrderBy(y => y.IdRole).FirstOrDefault(y => y.UserLogin == x.UserLogin).IdRole?? 4,
+                Avatar = x.Avatar,
+                Profile = x.ProfileBackground
+            });
+           
             usersIQ = usersIQ.Where(s => s.RoleOrStatus != 5);
 
             if (!String.IsNullOrEmpty(search))

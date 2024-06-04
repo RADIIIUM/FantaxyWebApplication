@@ -1,0 +1,25 @@
+﻿body {
+    background-color: #800080;
+}
+
+.container {
+    text-align: center;
+    margin-top: 20%;
+}
+
+.icon {
+    font-size: 5em;
+    color: white;
+}
+
+.error-text {
+    color: white;
+    font-size: 2em;
+    margin-bottom: 0;
+}
+
+.message {
+    color: white;
+    font-size: 1.5em;
+    margin-top: 0;
+}
