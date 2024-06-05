@@ -25,6 +25,9 @@ $(document).ready(function () {
                 if (response.role == 2) {
                     roles = roles.slice(1);
                 }
+                if (response.role == 1) {
+                    roles = ["Владелец","Администратор", "Модератор", "Пользователь"];
+                }
 
                 if ((response.role == 2 && (role != 'Администратор' && role != 'Владелец')) || response.role == 1) {
                     $('.modal-content').css('display', "block")

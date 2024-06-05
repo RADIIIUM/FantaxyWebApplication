@@ -62,10 +62,19 @@
     <h1 style="text-align: center"> Описание </h1>
     <textarea class="desc" readonly maxlength="2000">@Model.Description</textarea>
 
+    <form asp-controller="Profile"
+          asp-action="DeletePlanetProfile">
+        <input type="hidden" name="UserLogin" value="@Model.Login" />
+        <input type="submit"
+               class="btn -dark -big" value="Удалить профиль" />
+    </form>
+
+
         <input type="button"
            id="createPostButton"
            style="width: 65%"
                class="btn -dark -big" value="Создать пост" />
+
 
 </div>
 

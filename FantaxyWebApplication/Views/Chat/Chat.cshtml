@@ -19,28 +19,27 @@
 <link rel="stylesheet" href="~/css/chats/chatInfo.css" asp-append-version="true" />
 <link rel="stylesheet" href="~/css/profile.css" />
 <link rel="stylesheet" href="~/css/posts/post.css" />
+<link rel="stylesheet" href="~/css/main.css" asp-append-version="true" />
 
-
-    <div class="profileImg second-div">
-        <div class="div-edit">
-        <form id="profileImgForm" method="post" asp-controller="Chat" asp-action="DetailChat" enctype="multipart/form-data">
-            <label class="material-symbols-outlined" data-tooltip="Информация чата" for="profileImgInput">
-                account_box
+<div class="div-link">
+    <a asp-controller="Chat" asp-action="DetailChat">
+        <label class="material-symbols-outlined" data-tooltip="Информация чата" for="profileImgInput">
+            account_box
+        </label>
+        <input type="submit" style="display: none;" />
+    </a>
+    @if (Model.OwnerLogin == userModel.Login)
+    {
+        <a asp-controller="Chat" asp-action="EditChat">
+            <label class="material-symbols-outlined" data-tooltip="Редактировать чат"  for="profileImgInput">
+                edit
             </label>
-            <input type="submit" id="profileImgInput" style="display: none;" accept="image/png, image/jpeg" />
-        </form>
-        @if (Model.OwnerLogin == userModel.Login)
-        {
-            <form id="profileImgForm" method="post" asp-controller="Chat" asp-action="EditChat" enctype="multipart/form-data">
-                <label class="material-symbols-outlined" data-tooltip="Редактировать чат" for="profileImgInput">
-                    account_box
-                </label>
-                <input type="submit" id="profileImgInput" style="display: none;" accept="image/png, image/jpeg" />
-            </form>
-        }
+            <input type="submit" style="display: none;" />
+        </a>
+    }
+</div>
 
-        </div>
-    </div>
+
 <div id="chatroom">
 
 </div>
@@ -53,6 +52,8 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="~/js/signalr/dist/browser/signalr.min.js"></script>
 <script src="~/js/chat/getMessage.js"></script>
+
+
 
 <script>
     const hubConnection = new signalR.HubConnectionBuilder()

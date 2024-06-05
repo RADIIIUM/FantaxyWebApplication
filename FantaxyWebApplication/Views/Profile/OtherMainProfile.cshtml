@@ -62,7 +62,8 @@
     <h1 style="text-align: center"> Описание </h1>
     <textarea class="desc" readonly maxlength="2000">@Model.Description</textarea>
     
-
+    @if (user.Role == "Администратор" || user.Role == "Модератор" || user.Role == "Главный администратор")
+    {
         <div class="modal-content" style="margin-bottom: 10px; margin-top: 10px;">
                 <h1>Редактировать роль пользователю </h1>
                 <p> </p>
@@ -72,6 +73,7 @@
 
 
         </div>
+    }
 </div>
 
 

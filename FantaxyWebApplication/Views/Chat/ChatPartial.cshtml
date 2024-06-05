@@ -1,10 +1,17 @@
 ﻿@model IList<ChatModel>
-
+@using FantaxyWebApplication.Models.Entities;
+@using Newtonsoft.Json;
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    int? IdPlanet = HttpContextAccessor.HttpContext.Session.GetInt("PlanetId");
+    var json3 = HttpContextAccessor.HttpContext.Request.Cookies[$"Profile_{IdPlanet}"];
+    UserModel? profilePlanet = System.Text.Json.JsonSerializer.Deserialize<UserModel>(json3);
+}
 
 @foreach(var chat in Model)
 {
     string back = chat.ProfileBackground.Replace("\\", "/");
-<form asp-action="Chat" asp-controller="Chat" asp-route-IdChat="@chat.IdChat">
+
 
     <div class="chat" style="background: @($"url(\"{@back}\")");
         background-size: cover;
@@ -16,22 +23,33 @@
                 <span> @chat.MembersCount </span>
             </p>
         </div>
-        <div class="chat-btn">
-            <button class="-btn -light" data-tooltip="Войти в чат"
-                    type="submit">
-                <span class="material-symbols-outlined">
-                    login
-                </span>
-            </button>
 
-            <button class="-btn -dark" data-tooltip="Заблокировать">
-                <span class="material-symbols-outlined">
-                    priority_high
-                </span>
-            </button>
+        <div class="chat-btn">
+            <form asp-action="Chat" asp-controller="Chat" asp-route-IdChat="@chat.IdChat">
+                <button class="-btn -light" data-tooltip="Войти в чат"
+                        type="submit">
+                    <span class="material-symbols-outlined">
+                        login
+                    </span>
+                </button>
+            </form>
+                @if (profilePlanet.Role == "Модератор" ||
+               profilePlanet.Role == "Администратор" || profilePlanet.Role == "Владелец" || profilePlanet.Role == "Куратор")
+                {
+                    <form asp-controller="Chat" asp-action="BanChat" method="post">
+                        <input type="hidden" value="@chat.IdChat" name="IdChat" />
+                            <button class="-btn -dark" type="submit" data-tooltip="Заблокировать">
+                                <span class="material-symbols-outlined">
+                                    priority_high
+                                </span>
+                            </button>
+                    </form>
+                }
+
+
 
         </div>
     </div>
 
-    </form>
+
 }

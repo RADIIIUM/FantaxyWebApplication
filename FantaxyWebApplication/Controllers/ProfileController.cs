@@ -170,6 +170,18 @@ namespace FantaxyWebApplication.Controllers
                 return NotFound();
             }
         }
+        [HttpPost]
+        public async Task<IActionResult> DeletePlanetProfile(string UserLogin)
+        {
+            int IdPlanet = HttpContext.Session.Get<int>("PlanetId");
+            PlanetUsersInfo? planetProfile = _db.PlanetUsersInfos.FirstOrDefault(x => x.UserLogin == UserLogin && x.IdPlanet == IdPlanet);
+
+            _db.PlanetUsersInfos.Remove(planetProfile);
+
+            await _db.SaveChangesAsync();
+
+            return RedirectToAction("Planets","Main");
+        }
 
         [HttpPost]
         public async Task<IActionResult> OtherPlanetProfile(string Login)

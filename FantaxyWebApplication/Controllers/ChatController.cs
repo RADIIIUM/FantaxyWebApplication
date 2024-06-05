@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 using System.Web.Helpers;
+using Microsoft.Data.SqlClient;
 
 namespace FantaxyWebApplication.Controllers
 {
@@ -120,6 +121,54 @@ namespace FantaxyWebApplication.Controllers
             return list;
         }
 
+        [HttpPost]
+        public async Task<IActionResult> DeleteChat (int IdChat)
+        {
+            int PlanetId = HttpContext.Session.Get<int>("PlanetId");
+            Chat? chat = _db.Chats.FirstOrDefault(x => x.IdChat == IdChat && x.IdPlanet == PlanetId);
+            if (chat != null)
+            {
+                using (var dbContextTransaction = _db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        _db.Database.ExecuteSqlRaw("DELETE FROM Chats WHERE IdChat = @IdChat", new SqlParameter("@IdChat", chat.IdChat));
+                        dbContextTransaction.Commit();
+                    }
+                    catch (DbUpdateConcurrencyException ex)
+                    {
+                        dbContextTransaction.Rollback();
+                        // Обработка ошибки
+                    }
+                }
+            }
+            return RedirectToAction("ChatList", "Chat");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> BanChat(int IdChat)
+        {
+            int PlanetId = HttpContext.Session.Get<int>("PlanetId");
+            Chat? chat = _db.Chats.FirstOrDefault(x => x.IdChat == IdChat && x.IdPlanet == PlanetId);
+            if (chat != null)
+            {
+                using (var dbContextTransaction = _db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        _db.Database.ExecuteSqlRaw("DELETE FROM Chats WHERE IdChat = @IdChat", new SqlParameter("@IdChat", chat.IdChat));
+                        dbContextTransaction.Commit();
+                    }
+                    catch (DbUpdateConcurrencyException ex)
+                    {
+                        dbContextTransaction.Rollback();
+                        // Обработка ошибки
+                    }
+                }
+            }
+            return RedirectToAction("ChatList", "Chat");
+        }
+
         public async Task<IActionResult> DetailChat()
         {
             ChatModel chat = HttpContext.Session.Get<ChatModel>("Chat");
@@ -130,7 +179,7 @@ namespace FantaxyWebApplication.Controllers
             return NotFound();
         }
 
-            public async Task<IActionResult> EditChat()
+        public async Task<IActionResult> EditChat()
         {
             var result = HttpContext.Session.Get<ChatCreate>("EditChat");
             if (result != null)

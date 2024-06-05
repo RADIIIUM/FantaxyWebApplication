@@ -31,29 +31,26 @@
 
 <div class="profileImg second-div">
     <div class="div-edit">
-        <form>
-            <label class="material-symbols-outlined" data-tooltip="Вернуться назад" for="profileImgInput">
-                keyboard_return
-            </label>
-            <input type="button" onclick="history.back()"  id="profileImgInput" name="Avatar" style="display: none;"  />
-        </form>
+
         @if (profilePlanet.Role != "Пользователь")
         {
-            <form>
+            <form asp-action="BanChat" asp-controller="Chat" method="post">
                 <label class="material-symbols-outlined" data-tooltip="Заблокировать чат" for="profileImgInput">
                     close
                 </label>
-                <input type="button" onclick="history.back()" id="profileImgInput" name="Avatar" style="display: none;" />
+                <input type="hidden" value="@Model.IdChat" name="IdChat" />
+                <input type="submit" id="profileImgInput" name="Avatar" style="display: none;" />
             </form>
         }
 
         @if (Model.OwnerLogin == profilePlanet.Login)
         {
-            <form>
+            <form asp-action="DeleteChat" asp-controller="Chat" method="post">
                 <label class="material-symbols-outlined" data-tooltip="Удалить чат" for="profileImgInput">
                     delete
                 </label>
-                <input type="button" onclick="history.back()" id="profileImgInput" name="Avatar" style="display: none;" />
+                <input type="hidden" value="@Model.IdChat" name="IdChat" />
+                <input type="submit"  id="profileImgInput" name="Avatar" style="display: none;" />
             </form>
         }
 
