@@ -1,5 +1,6 @@
 ﻿using FantaxyWebApplication.Models;
 using FantaxyWebApplication.Models.Entities;
+using FantaxyWebApplication.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -101,6 +102,8 @@ namespace FantaxyWebApplication.Controllers
                     HttpContext.Response.Cookies.Append($"Profile_{IdPlanet}", serialize);
 
                 }
+                PlanetGenerate planetGenerate = new PlanetGenerate(_db);
+                planetGenerate.RegenerateCookiePlanet(new HttpContextAccessor(), user);
                 HttpContext.Session.Set("Access", userModel.Role);
                 return Redirect("/Planet/MainPage");
             }

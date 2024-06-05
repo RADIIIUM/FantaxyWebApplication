@@ -1,6 +1,13 @@
-﻿@using Newtonsoft.Json;
+﻿@using FantaxyWebApplication.Models.Entities;
+@using Newtonsoft.Json;
 @model IList<PostModel>
-
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    int? IdPlanet = HttpContextAccessor.HttpContext.Session.GetInt("PlanetId");
+    var json3 = HttpContextAccessor.HttpContext.Request.Cookies[$"Profile_{IdPlanet}"];
+    UserModel? profilePlanet = System.Text.Json.JsonSerializer.Deserialize<UserModel>(json3);
+}
+<meta charset="utf-8" />
 <script>
     function setButtonColors(post) {
         let likeButton = document.querySelector(`button[data-post-id="${post.IdPost}"][data-type="like"]`);
@@ -50,6 +57,17 @@
             <span class="dislikeCount material-symbols-outlined" data-post-id="@post.IdPost">
                 @post.DislikeCount
             </span>
+
+            @if (post.authorInfo.UserLogin == profilePlanet.Login || profilePlanet.Role == "Модератор" ||
+           profilePlanet.Role == "Администратор" || profilePlanet.Role == "Владелец")
+            {
+                <button class="deleteBtn" style="background: red" id="deleteBtn" data-post-id="@post.IdPost">
+                    <span class="material-symbols-outlined">
+                        delete
+                    </span>
+                </button>
+            }
+
             <script>
                 setButtonColors(@Html.Raw(JsonConvert.SerializeObject(post)));
             </script>
@@ -69,4 +87,4 @@
 }
 
 <script src="~/js/post/likeOrdislike.js"></script>
-
+<script src="~/js/post/deletePost.js" charset="utf-8"></script>

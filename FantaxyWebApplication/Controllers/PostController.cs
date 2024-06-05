@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Scaffolding.Metadata;
 using System.Linq;
 using System.Text.Json;
+using System.Web.Helpers;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace FantaxyWebApplication.Controllers
@@ -21,18 +22,6 @@ namespace FantaxyWebApplication.Controllers
             _db = db;
             _httpContextAccessor = httpContextAccessor;
             _webHostEnvironment = webHostEnvironment;
-        }
-
-        [HttpPost]
-        public async Task<JsonResult> DeletePost(int postId)
-        {
-            Post? post = _db.Posts.FirstOrDefault(x => x.IdPost == postId);
-            if(post != null) {
-                _db.Posts.Remove(post);
-                await _db.SaveChangesAsync();
-                return Json(new { success = true });
-            }
-            return Json(new { success = false });
         }
 
 
@@ -61,25 +50,35 @@ namespace FantaxyWebApplication.Controllers
             return PartialView();
         }
 
+        [HttpPost]
+        public async Task<JsonResult> DeletePost (int IdPost)
+        {
+            Post? post = _db.Posts.FirstOrDefault(x => x.IdPost == IdPost);
+            if(post != null)
+            {
+                _db.Posts.Remove(post);
+                await _db.SaveChangesAsync();
+                return Json(new { success = true });
+            }
+            return Json(new { success = false });
+        }
+
+
         [HttpGet]
         public async Task<IActionResult> UsersPost([FromBody] UserModel model)
         {
             int IdPlanet = HttpContext.Session.Get<int>("PlanetId");
-                var posts = from p in _db.Posts
-                            where p.IdPlanet == IdPlanet && p.OwnerLogin == model.Login
-                            join u in _db.PlanetUsersInfos on p.OwnerLogin equals u.UserLogin into up
-                            from u in up.DefaultIfEmpty()
-                            select new PostModel()
-                            {
-                                IdPost = p.IdPost,
-                                Title = p.PostsInfo.Title,
-                                Description = p.PostsInfo.PostText,
-                                Files = _db.PostFiles.Where(x => x.IdPost == p.IdPost).Select(x => x.PathFile).ToList<string>(),
-                                authorInfo = u,
-                                LikeCount = _db.LikeDislikePosts.Count(y => y.IdPost == p.IdPost && y.LikeOrDislike == true),
-                                DislikeCount = _db.LikeDislikePosts.Count(y => y.IdPost == p.IdPost && y.LikeOrDislike == false),
-                                IsLiked = _db.LikeDislikePosts.FirstOrDefault(x => x.IdPost == p.IdPost && model.Login == x.UserLogin).LikeOrDislike,
-                            };
+            var posts = _db.Posts.Where(p => p.IdPlanet == IdPlanet && p.OwnerLogin == model.Login).Select(p => new PostModel()
+            {
+                IdPost = p.IdPost,
+                Title = p.PostsInfo.Title,
+                Description = p.PostsInfo.PostText,
+                Files = _db.PostFiles.Where(x => x.IdPost == p.IdPost).Select(x => x.PathFile).ToList<string>(),
+                authorInfo = _db.PlanetUsersInfos.FirstOrDefault(x => x.IdPlanet == IdPlanet && x.UserLogin == p.OwnerLogin),
+                LikeCount = _db.LikeDislikePosts.Count(y => y.IdPost == p.IdPost && y.LikeOrDislike == true),
+                DislikeCount = _db.LikeDislikePosts.Count(y => y.IdPost == p.IdPost && y.LikeOrDislike == false),
+                IsLiked = _db.LikeDislikePosts.FirstOrDefault(x => x.IdPost == p.IdPost && model.Login == x.UserLogin).LikeOrDislike,
+            });
 
                 IList<PostModel> list = await posts.AsNoTracking().ToListAsync();
                 return PartialView(list);

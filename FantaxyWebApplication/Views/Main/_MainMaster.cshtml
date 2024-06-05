@@ -44,20 +44,23 @@
                 </a>
 
             </div>
-            <form asp-action="RedirectToPlanetPage" asp-controller="Main">
+
                 @if (userModel.planetList != null)
                 {
                     foreach (var planet in userModel.planetList)
                     {
                         if(planet != null)
                         {
-                            <img src="@planet?.Avatar" class="planetItemList" />
-                            <input type="hidden" value="@planet?.IdPlanet" name="IdPlanet" />
+                        <form asp-action="RedirectToPlanetPage" asp-controller="Main">
+                            <arcticle onclick="this.parentNode.submit()">
+                                <img src="@planet?.Avatar" class="planetItemList" />
+                                <input type="hidden" value="@planet?.IdPlanet" name="IdPlanet" />
+                            </arcticle>
+                        </form>
                         }
                     }
                 }
 
-            </form>
             <p></p>
         </div>
     </div>

@@ -31,20 +31,17 @@ namespace FantaxyWebApplication.Controllers
             var json = HttpContext.Request.Cookies[$"Profile_{IdPlanet}"];
             UserModel? userModel = JsonSerializer.Deserialize<UserModel>(json);
 
-            var posts = from p in _db.Posts where p.IdPlanet == IdPlanet
-                        join u in _db.PlanetUsersInfos on p.OwnerLogin equals u.UserLogin into up
-                        from u in up.DefaultIfEmpty()
-                        select new PostModel()
-                        {
-                            IdPost = p.IdPost,
-                            Title = p.PostsInfo.Title,
-                            Description = p.PostsInfo.PostText,
-                            Files = _db.PostFiles.Where(x => x.IdPost == p.IdPost).Select(x => x.PathFile).ToList<string>(),
-                            authorInfo = u,
-                            LikeCount = _db.LikeDislikePosts.Count(y => y.IdPost == p.IdPost && y.LikeOrDislike == true),
-                            DislikeCount = _db.LikeDislikePosts.Count(y => y.IdPost == p.IdPost && y.LikeOrDislike == false),
-                            IsLiked = _db.LikeDislikePosts.FirstOrDefault(x => x.IdPost == p.IdPost && userModel.Login == x.UserLogin).LikeOrDislike,
-                                          };
+            var posts = _db.Posts.Where(p => p.IdPlanet == IdPlanet).Select(p => new PostModel()
+            {
+                IdPost = p.IdPost,
+                Title = p.PostsInfo.Title,
+                Description = p.PostsInfo.PostText,
+                Files = _db.PostFiles.Where(x => x.IdPost == p.IdPost).Select(x => x.PathFile).ToList<string>(),
+                authorInfo = _db.PlanetUsersInfos.FirstOrDefault(x => x.IdPlanet == IdPlanet && x.UserLogin == p.OwnerLogin),
+                LikeCount = _db.LikeDislikePosts.Count(y => y.IdPost == p.IdPost && y.LikeOrDislike == true),
+                DislikeCount = _db.LikeDislikePosts.Count(y => y.IdPost == p.IdPost && y.LikeOrDislike == false),
+                IsLiked = _db.LikeDislikePosts.FirstOrDefault(x => x.IdPost == p.IdPost && userModel.Login == x.UserLogin).LikeOrDislike,
+            });
 
             IList<PostModel> list = await posts.AsNoTracking().ToListAsync();
             return PartialView(list);
@@ -56,21 +53,17 @@ namespace FantaxyWebApplication.Controllers
             var json = HttpContext.Request.Cookies[$"Profile_{IdPlanet}"];
             UserModel? userModel = JsonSerializer.Deserialize<UserModel>(json);
 
-            var posts = from p in _db.Posts
-                        where p.IdPlanet == IdPlanet && p.OwnerLogin == userModel.Login
-                        join u in _db.PlanetUsersInfos on p.OwnerLogin equals u.UserLogin into up
-                        from u in up.DefaultIfEmpty()
-                        select new PostModel()
-                        {
-                            IdPost = p.IdPost,
-                            Title = p.PostsInfo.Title,
-                            Description = p.PostsInfo.PostText,
-                            Files = _db.PostFiles.Where(x => x.IdPost == p.IdPost).Select(x => x.PathFile).ToList<string>(),
-                            authorInfo = u,
-                            LikeCount = _db.LikeDislikePosts.Count(y => y.IdPost == p.IdPost && y.LikeOrDislike == true),
-                            DislikeCount = _db.LikeDislikePosts.Count(y => y.IdPost == p.IdPost && y.LikeOrDislike == false),
-                            IsLiked = _db.LikeDislikePosts.FirstOrDefault(x => x.IdPost == p.IdPost && userModel.Login == x.UserLogin).LikeOrDislike,
-                        };
+            var posts = _db.Posts.Where(p => p.IdPlanet == IdPlanet && p.OwnerLogin == userModel.Login).Select(p => new PostModel()
+            {
+                IdPost = p.IdPost,
+                Title = p.PostsInfo.Title,
+                Description = p.PostsInfo.PostText,
+                Files = _db.PostFiles.Where(x => x.IdPost == p.IdPost).Select(x => x.PathFile).ToList<string>(),
+                authorInfo = _db.PlanetUsersInfos.FirstOrDefault(x => x.IdPlanet == IdPlanet && x.UserLogin == p.OwnerLogin),
+                LikeCount = _db.LikeDislikePosts.Count(y => y.IdPost == p.IdPost && y.LikeOrDislike == true),
+                DislikeCount = _db.LikeDislikePosts.Count(y => y.IdPost == p.IdPost && y.LikeOrDislike == false),
+                IsLiked = _db.LikeDislikePosts.FirstOrDefault(x => x.IdPost == p.IdPost && userModel.Login == x.UserLogin).LikeOrDislike,
+            });
 
             IList<PostModel> list = await posts.AsNoTracking().ToListAsync();
             return PartialView(list);
@@ -141,7 +134,7 @@ namespace FantaxyWebApplication.Controllers
             {
                 Id = x.UserLogin,
                 Name = x.UserName,
-                RoleOrStatus = _db.PlanetPlanetRoleUsers.OrderBy(y => y.IdRole).FirstOrDefault(y => y.UserLogin == x.UserLogin).IdRole?? 4,
+                RoleOrStatus = _db.PlanetPlanetRoleUsers.Where(y => y.IdPlanet == IdPlanet).FirstOrDefault(y => y.UserLogin == x.UserLogin).IdRole?? 4,
                 Avatar = x.Avatar,
                 Profile = x.ProfileBackground
             });
@@ -373,6 +366,8 @@ namespace FantaxyWebApplication.Controllers
             _db.PlanetPlanetRoleUsers.Add(curatorRole);
 
             await _db.SaveChangesAsync();
+            PlanetGenerate planetGenerate = new PlanetGenerate(_db);
+            planetGenerate.RegenerateCookiePlanet(new HttpContextAccessor(), userModel);
 
             return Redirect("/Main/Planets");
         }

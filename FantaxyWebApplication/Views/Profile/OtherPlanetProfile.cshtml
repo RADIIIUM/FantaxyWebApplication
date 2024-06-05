@@ -1,7 +1,12 @@
-﻿@model UserModel
+﻿@using System.Text.Json;
+@model UserModel
 @inject IHttpContextAccessor access
 @{
     access.HttpContext.Session.Remove("EditProfile");
+
+    int? IdPlanet = access.HttpContext.Session.GetInt("PlanetId");
+    var json3 = access.HttpContext.Request.Cookies[$"Profile_{IdPlanet}"];
+    UserModel? profilePlanet = JsonSerializer.Deserialize<UserModel>(json3);
 
     Layout = "~/Views/Main/_MainMaster.cshtml";
 
@@ -58,15 +63,18 @@
     <h1 style="text-align: center"> Описание </h1>
     <textarea class="desc" readonly maxlength="2000">@Model.Description</textarea>
 
-    <div class="modal-content" style="margin-bottom: 10px; margin-top: 10px;">
-        <h1>Редактировать роль пользователю </h1>
-        <p> </p>
-        <h2> <button onclick="changeRole()" class="-btn -dark -medium" id="roleBtn"> @Model.Role </button> </h2>
-        <input type="hidden" class="userLogin" value="@Model.Login" />
-        <button onclick="applyChangeRole()" class="-btn -big -light"> Изменить роль </button>
+    @if (profilePlanet.Role == "Администратор" || profilePlanet.Role == "Владелец")
+    {
+        <div class="modal-content" style="margin-bottom: 10px; margin-top: 10px;">
+            <h1>Редактировать роль пользователю </h1>
+            <p> </p>
+            <h2> <button onclick="changeRole()" class="-btn -dark -medium" id="roleBtn"> @Model.Role </button> </h2>
+            <input type="hidden" class="userLogin" value="@Model.Login" />
+            <button onclick="applyChangeRole()" class="-btn -big -light"> Изменить роль </button>
 
 
-    </div>
+        </div>
+    }
 
 </div>
 
