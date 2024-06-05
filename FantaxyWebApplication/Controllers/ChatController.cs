@@ -49,7 +49,7 @@ namespace FantaxyWebApplication.Controllers
                 {
                     profile = await CreateChatProfile(profilePlanet.Login, chat.IdChat);
                 }
-                if(profile.IdChatRole == 5) return View("ChatList");
+                if(profile.IdChatRole == 5) return View("Banned");
                 HttpContext.Session.Set<ChatsUsersChatRole>("ChatUser", profile);
                 HttpContext.Session.Set<ChatModel>("Chat", chat);
                 return View(chat);

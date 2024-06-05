@@ -189,6 +189,12 @@ namespace FantaxyWebApplication.Controllers
                 if (u != null)
                 {
                     GlobalUsersInfo glu = await _db.GlobalUsersInfos.FirstOrDefaultAsync(x => x.UserLogin == user.UserLogin);
+                    string role = await GetRole(glu);
+                    if (role == "Заблокирован")
+                    {
+                        return View("Banned");
+                    }
+                    
                     UserModel us = new UserModel();
 
                     us.Name = glu.UserName;
@@ -199,7 +205,7 @@ namespace FantaxyWebApplication.Controllers
                     us.Login = glu.UserLogin;
                     us.Email = glu.UserEmail;
                     us.Telephone = glu.UserTelephone;
-                    us.Role = await GetRole(glu);
+                    us.Role = role;
                     var planetList = (from p in _db.PlanetUsersInfos
                                       where p.UserLogin == user.UserLogin
                                       join pln in _db.PlanetInfos on p.IdPlanet equals pln.IdPlanet into planet

@@ -96,7 +96,7 @@ namespace FantaxyWebApplication.Controllers
                     userModel.Role = await GetRole(glu, IdPlanet);
                     if(userModel.Role == "Заблокирован") 
                     {
-                        return Redirect("/Main/Planets");
+                        return View("Banned");
                     }
                     var serialize = JsonSerializer.Serialize<UserModel>(userModel);
                     HttpContext.Response.Cookies.Append($"Profile_{IdPlanet}", serialize);
