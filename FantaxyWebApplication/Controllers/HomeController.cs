@@ -206,17 +206,12 @@ namespace FantaxyWebApplication.Controllers
                     us.Email = glu.UserEmail;
                     us.Telephone = glu.UserTelephone;
                     us.Role = role;
-                    var planetList = (from p in _db.PlanetUsersInfos
-                                      where p.UserLogin == user.UserLogin
-                                      join pln in _db.PlanetInfos on p.IdPlanet equals pln.IdPlanet into planet
-                                      from pln in planet.DefaultIfEmpty()
-                                      join s in _db.StatusesPlanets on p.IdPlanet equals s.IdPlanet into ps
-                                      from s in ps.DefaultIfEmpty()
-                                      where s.IdStatus != 3
-                                      select pln).ToList();
+                    var planetList =  _db.PlanetInfos
+                        .Where(x => _db.PlanetUsers.Any(y => y.UserLogin == u.UserLogin && y.IdPlanet == x.IdPlanet))
+                        .ToList();
                     us.planetList = planetList;
 
-
+                    HttpContext.Response.Cookies.Delete("UserInfo");
                     var json = JsonSerializer.Serialize<UserModel>(us);
                     HttpContext.Response.Cookies.Append("UserInfo", json);
                     await Authenticate(user.UserLogin);

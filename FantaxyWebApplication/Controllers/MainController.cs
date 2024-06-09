@@ -20,6 +20,11 @@ namespace FantaxyWebApplication.Controllers
         [Authorize]
         public IActionResult Users()
         {
+            var json = HttpContext.Request.Cookies["UserInfo"];
+            if(json == null)
+            {
+                return Redirect("/Home/Index");
+            }
             return View();
         }
 

@@ -293,6 +293,10 @@ namespace FantaxyWebApplication.Controllers
         {
             var json = HttpContext.Request.Cookies["UserInfo"];
             UserModel? userModel = JsonSerializer.Deserialize<UserModel>(json);
+            if(userModel != null)
+            {
+                return Redirect("/Main/Planets");
+            }
             Planet planet = new Planet();
             planet.OwnerLogin = userModel.Login;
             planet.CuratorLoginNavigation = await SearchCurator(userModel.Login);
