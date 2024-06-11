@@ -1,11 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FantaxyWebApplication.Models.Entities;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 
 namespace FantaxyWebApplication.Services
 {
     public static class FileServices
     {
-        
+
         public static IFormFile ConvertFileToIFormFile(IWebHostEnvironment appEnvironment, string filePath)
         {
             var fileInfo = appEnvironment.WebRootFileProvider.GetFileInfo(filePath);
@@ -24,7 +27,7 @@ namespace FantaxyWebApplication.Services
             return filePath;
         }
 
-        public static IFormFile UploadFile (IWebHostEnvironment appEnvironment, string filePath)
+    public static IFormFile UploadFile (IWebHostEnvironment appEnvironment, string filePath)
         {
             var fileInfo = appEnvironment.WebRootFileProvider.GetFileInfo(filePath);
             var stream = fileInfo.CreateReadStream();

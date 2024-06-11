@@ -72,18 +72,16 @@
             </div>
             @if (userModel.planetList != null)
             {
-                foreach (var planet in userModel.planetList)
+
+                @foreach (var planet in userModel.planetList)
+
                 {
-                    if (planet != null)
-                    {
-                        <form asp-action="RedirectToPlanetPage" asp-controller="Main">
-                            <arcticle onclick="this.parentNode.submit()">
-                                <img src="@planet?.Avatar" class="planetItemList" />
-                                <input type="hidden" value="@planet?.IdPlanet" name="IdPlanet" />
-                            </arcticle>
-                        </form>
-                    }
+                    <form asp-action="RedirectToPlanetPage" asp-controller="Main">
+                        <img src="@planet.Avatar" class="planetItemList" />
+                        <input type="hidden" value="@planet.IdPlanet" name="IdPlanet" />
+                    </form>
                 }
+
             }
             <p></p>
         </div>
