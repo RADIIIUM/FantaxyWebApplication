@@ -76,10 +76,14 @@
                 @foreach (var planet in userModel.planetList)
 
                 {
-                    <form asp-action="RedirectToPlanetPage" asp-controller="Main">
-                        <img src="@planet.Avatar" class="planetItemList" />
-                        <input type="hidden" value="@planet.IdPlanet" name="IdPlanet" />
-                    </form>
+                    if (planet != null)
+                    {
+                        <form asp-action="RedirectToPlanetPage" asp-controller="Main">
+                            <img src="@planet.Avatar" class="planetItemList" />
+                            <input type="hidden" value="@planet.IdPlanet" name="IdPlanet" />
+                        </form>
+                    }
+                }
                 }
 
             }

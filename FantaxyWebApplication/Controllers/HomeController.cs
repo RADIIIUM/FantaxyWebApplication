@@ -212,6 +212,8 @@ namespace FantaxyWebApplication.Controllers
                     us.planetList = planetList;
 
                     HttpContext.Response.Cookies.Delete("UserInfo");
+                    
+
                     var json = JsonSerializer.Serialize<UserModel>(us);
                     HttpContext.Response.Cookies.Append("UserInfo", json);
                     await Authenticate(user.UserLogin);

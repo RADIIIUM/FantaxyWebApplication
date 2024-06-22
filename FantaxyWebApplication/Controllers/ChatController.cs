@@ -352,7 +352,7 @@ namespace FantaxyWebApplication.Controllers
             ChatCreate? create = HttpContext.Session.Get<ChatCreate>("CreateChat");
             if(create?.MainBackground != null) chatInfo.Background = FileServices.CreateFileFromByteArray(_webHostEnvironment, create.MainBackground, Path.Combine("\\img\\FantasyFiles\\Profiles\\Style\\Chats\\Main", $"{chat.IdChat}_{IdPlanet}.jpg"));
             else chatInfo.Background = "\\img\\background\\MainBackground.jpg";
-            if(create?.ProfileBack != null) chatInfo.Avatar = FileServices.CreateFileFromByteArray(_webHostEnvironment, create.MainBackground, Path.Combine("\\img\\FantasyFiles\\Profiles\\Style\\Chats\\Profile", $"{chat.IdChat}_{IdPlanet}.jpg"));
+            if(create?.ProfileBack != null) chatInfo.Avatar = FileServices.CreateFileFromByteArray(_webHostEnvironment, create.ProfileBack, Path.Combine("\\img\\FantasyFiles\\Profiles\\Style\\Chats\\Profile", $"{chat.IdChat}_{IdPlanet}.jpg"));
             else chatInfo.Avatar = "\\img\\background\\secondBack.jpg";
 
             ChatsUsersChatRole chatRole = new ChatsUsersChatRole();
